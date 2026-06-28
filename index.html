@@ -1,590 +1,1061 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chaplin — Sahne & Lezzet</title>
-  <meta name="description" content="Charlie Chaplin'in büyülü dünyasında bir akşam yemeği. Kordonboyu Cd. No:109/A, Büyükçekmece.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --black: #0A0A0A;
-      --black-light: #1A1818;
-      --cream: #F5F0E8;
-      --cream-dim: #E8E0D0;
-      --gold: #B8860B;
-      --gold-light: #D4A84B;
-      --red: #8B1A1A;
-      --red-dim: #6B1010;
-      --text: #F5F0E8;
-      --text-dim: #A89880;
-      --text-muted: #5A4A3A;
-      --font-display: 'Cinzel', serif;
-      --font-sans: 'DM Sans', sans-serif;
-    }
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-    body { font-family: var(--font-sans); background: var(--black); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Chaplin — Flipbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Special+Elite&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: #2c1810;
+  font-family: 'Special Elite', monospace;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-    /* ─── CURTAIN OVERLAY ─── */
-    .curtain-overlay {
-      position: fixed; inset: 0; z-index: 999; pointer-events: none;
-      display: flex;
-    }
-    .curtain-panel {
-      width: 50%; height: 100%;
-      background: var(--red-dim);
-      background-image: repeating-linear-gradient(
-        0deg,
-        transparent 0px, transparent 30px,
-        rgba(139,26,26,0.6) 30px, rgba(139,26,26,0.6) 32px
-      );
-      transition: transform 1.5s cubic-bezier(0.77, 0, 0.18, 1);
-    }
-    .curtain-left { transform-origin: left center; }
-    .curtain-right { transform-origin: right center; }
-    .curtain-overlay.open .curtain-left { transform: translateX(-100%); }
-    .curtain-overlay.open .curtain-right { transform: translateX(100%); }
+/* ======== THE FLIPBOOK STACK ======== */
+.flipbook-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  perspective: 1200px;
+}
 
-    /* ─── PROJECTOR BEAM ─── */
-    .projector-beam {
-      position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 1;
-      width: 0; height: 0;
-      border-left: 200px solid transparent;
-      border-right: 200px solid transparent;
-      border-top: 100vh solid rgba(245,240,232,0.012);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 2s ease 1.5s;
-    }
-    .projector-beam.on { opacity: 1; }
+/* The book edge visible on first load */
+.book-edge {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  animation: bookAppear 1.5s ease-out 0.5s forwards;
+}
+@keyframes bookAppear {
+  0% { opacity: 0; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
 
-    /* ─── FILM GRAIN ─── */
-    .film-grain {
-      position: fixed; inset: 0; z-index: 2; pointer-events: none;
-      opacity: 0.03;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-size: 200px 200px;
-    }
+.book-spine {
+  width: 240px;
+  height: 340px;
+  background: #5c3d2e;
+  border-radius: 4px 12px 12px 4px;
+  position: relative;
+  box-shadow: 8px 8px 30px rgba(0,0,0,0.6), inset -2px 0 8px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotateY(5deg);
+  border-left: 3px solid #8b6914;
+}
+.book-spine::after {
+  content: '';
+  position: absolute;
+  top: 20px; bottom: 20px; right: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #8b6914 30%, #8b6914 70%, transparent);
+}
+.book-spine .title {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  color: #d4a047;
+  letter-spacing: 6px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  text-shadow: 0 0 10px rgba(212,160,71,0.3);
+}
+.book-spine .sub {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  color: #8b7355;
+  margin-top: 20px;
+  letter-spacing: 3px;
+}
 
-    /* ─── FILMSTRIP BORDER ─── */
-    .filmstrip {
-      position: absolute; z-index: 0; pointer-events: none;
-      opacity: 0.06;
-    }
-    .filmstrip.h { left: 0; right: 0; height: 20px;
-      background: repeating-linear-gradient(90deg, transparent 0, transparent 16px, rgba(245,240,232,0.5) 16px, rgba(245,240,232,0.5) 20px); }
-    .filmstrip.top { top: 0; }
-    .filmstrip.bot { bottom: 0; }
-    .filmstrip.v { top: 0; bottom: 0; width: 20px;
-      background: repeating-linear-gradient(180deg, transparent 0, transparent 16px, rgba(245,240,232,0.5) 16px, rgba(245,240,232,0.5) 20px); }
-    .filmstrip.left { left: 0; }
-    .filmstrip.right { right: 0; }
+/* Page turn indicator */
+.page-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99;
+  font-family: 'Special Elite', monospace;
+  font-size: 12px;
+  color: #8b7355;
+  opacity: 0;
+  animation: fadeInUp 1s ease-out 2.5s forwards;
+  pointer-events: none;
+  letter-spacing: 2px;
+}
+.page-indicator span {
+  display: inline-block;
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
 
-    /* ─── NAV ─── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 0 40px; height: 72px;
-      display: flex; align-items: center; justify-content: space-between;
-      transition: background 0.5s ease;
-    }
-    nav.scrolled { background: rgba(10,10,10,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(184,134,11,0.08); }
-    .nav-logo {
-      font-family: var(--font-display); font-size: 1.3rem; font-weight: 700;
-      color: var(--cream); text-decoration: none; letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-    .nav-logo span { color: var(--gold); }
-    .nav-links { display: flex; gap: 2px; list-style: none; align-items: center; }
-    .nav-links a {
-      text-decoration: none; color: var(--text-dim); font-size: 0.7rem; font-weight: 500;
-      padding: 8px 16px; text-transform: uppercase; letter-spacing: 0.15em;
-      transition: color 0.3s ease;
-    }
-    .nav-links a:hover { color: var(--gold); }
-    .nav-cta {
-      background: var(--red) !important; color: var(--cream) !important;
-      padding: 10px 24px !important;
-    }
-    .nav-cta:hover { background: var(--red-dim) !important; }
-    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--cream); }
+/* ======== PAGES ======== */
+.page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  opacity: 0;
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transform: translateY(40px) rotateX(2deg);
+}
+.page.visible {
+  opacity: 1;
+  transform: translateY(0) rotateX(0);
+}
 
-    /* ─── STAGE / HERO ─── */
-    .stage {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden; padding: 120px 40px 80px;
-      text-align: center;
-    }
-    .stage-bg-text {
-      position: absolute; z-index: 0; pointer-events: none;
-      font-family: var(--font-display); font-size: clamp(20rem, 50vw, 60rem);
-      font-weight: 800; color: rgba(255,255,255,0.015); line-height: 1; user-select: none;
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
-      letter-spacing: -0.08em;
-    }
-    .stage-spotlight {
-      position: absolute; top: -30%; left: 50%; transform: translateX(-50%); z-index: 0;
-      width: 60vmin; height: 80vmin;
-      background: radial-gradient(ellipse, rgba(184,134,11,0.04) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .stage-content { position: relative; z-index: 1; max-width: 650px; }
-    .stage-reel {
-      display: inline-flex; align-items: center; gap: 12px;
-      font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 28px;
-      opacity: 0; animation: fadeUp 1s ease 1.8s forwards;
-    }
-    .stage-reel::before, .stage-reel::after {
-      content: ''; display: block; width: 24px; height: 1px; background: var(--gold);
-    }
-    .stage h1 {
-      font-family: var(--font-display);
-      font-size: clamp(3.5rem, 10vw, 7rem);
-      font-weight: 700; line-height: 0.9;
-      color: var(--cream); margin-bottom: 8px;
-      text-transform: uppercase; letter-spacing: -0.02em;
-      opacity: 0; animation: fadeUp 1s ease 2s forwards;
-    }
-    .stage h1 em { font-weight: 400; font-style: normal; display: block; font-size: 0.45em; letter-spacing: 0.3em; color: var(--gold); margin-top: 8px; }
-    .stage .director {
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-dim); margin-bottom: 32px;
-      opacity: 0; animation: fadeUp 1s ease 2.2s forwards;
-    }
-    .stage .director span { color: var(--gold); }
-    .stage-actions {
-      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-      opacity: 0; animation: fadeUp 1s ease 2.4s forwards;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 16px 36px; border-radius: 0;
-      font-family: var(--font-sans); font-size: 0.75rem; font-weight: 600;
-      text-decoration: none; text-transform: uppercase; letter-spacing: 0.12em;
-      transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
-      border: none; cursor: pointer;
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn-primary { background: var(--gold); color: var(--black); }
-    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
-    .btn-outline { background: transparent; color: var(--cream); border: 1.5px solid rgba(245,240,232,0.15); }
-    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
-    .btn-red { background: var(--red); color: var(--cream); }
-    .btn-red:hover { background: var(--red-dim); transform: translateY(-2px); }
+/* Paper texture overlay */
+.page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,90,43,0.03) 2px, rgba(139,90,43,0.03) 3px);
+  pointer-events: none;
+  z-index: 0;
+}
 
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes flicker {
-      0%,100%{opacity:1}
-      3%{opacity:0.6}
-      6%{opacity:1}
-      7%{opacity:0.8}
-      8%{opacity:1}
-      20%{opacity:0.9}
-      21%{opacity:1}
-    }
-    .stage-flicker {
-      position: absolute; inset: 0; z-index: 3; pointer-events: none;
-      background: rgba(0,0,0,0.2);
-      opacity: 0; animation: flicker 6s ease-in-out 3s infinite;
-    }
+/* Page edge curl shadow */
+.page::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 10%;
+  right: 10%;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.15), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
 
-    /* ─── INTERTITLE ─── */
-    .intertitle {
-      padding: 80px 40px; text-align: center;
-      background: var(--cream); position: relative;
-    }
-    .intertitle-inner { max-width: 700px; margin: 0 auto; }
-    .intertitle .act {
-      font-family: var(--font-display); font-size: 0.65rem; font-weight: 600;
-      letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--black); margin-bottom: 8px; opacity: 0.4;
-    }
-    .intertitle h2 {
-      font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 600; color: var(--black); line-height: 1.1;
-      text-transform: uppercase; letter-spacing: 0.02em;
-    }
-    .intertitle h2 em { color: var(--red); font-style: normal; }
-    .intertitle p {
-      color: rgba(10,10,10,0.5); font-size: 0.9rem; margin-top: 12px;
-      max-width: 500px; margin-left: auto; margin-right: auto;
-    }
-    .intertitle.dark { background: var(--black); }
-    .intertitle.dark h2 { color: var(--cream); }
-    .intertitle.dark p { color: var(--text-dim); }
-    .intertitle .ornament { font-size: 1.5rem; color: var(--gold); opacity: 0.3; margin-bottom: 8px; }
+/* ======== COVER PAGE ======== */
+.page-cover {
+  background: #3d2b1f;
+  min-height: 100vh;
+  padding: 0;
+  position: relative;
+  z-index: 10;
+}
+.page-cover::before { display: none; }
+.page-cover::after { display: none; }
 
-    /* ─── SCENE / SECTION ─── */
-    .scene {
-      padding: 100px 40px; position: relative; overflow: hidden;
-    }
-    .scene-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+.cover-content {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 50% 40%, rgba(212,160,71,0.08) 0%, transparent 60%),
+    linear-gradient(135deg, #3d2b1f 0%, #2c1810 50%, #3d2b1f 100%);
+}
 
-    /* ─── STORY ─── */
-    .story-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-    }
-    .story-visual {
-      aspect-ratio: 4/3; background: var(--black-light);
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-    }
-    .story-visual .frame {
-      position: absolute; inset: 8px; border: 1px solid rgba(184,134,11,0.08);
-    }
-    .story-visual .quote-mark {
-      font-family: var(--font-display); font-size: 6rem; font-weight: 700;
-      color: var(--gold); opacity: 0.1; line-height: 1;
-    }
-    .story-text .tag-line {
-      font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 8px;
-    }
-    .story-text h3 {
-      font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-      font-weight: 600; text-transform: uppercase; line-height: 1.1;
-      margin-bottom: 16px;
-    }
-    .story-text p { color: var(--text-dim); line-height: 1.8; margin-bottom: 12px; font-size: 0.9rem; }
-    .story-text .chaplin-quote {
-      font-family: var(--font-display); font-size: 1.1rem; font-style: italic;
-      color: var(--gold); margin-top: 20px; padding: 16px 0;
-      border-top: 1px solid rgba(184,134,11,0.1);
-    }
+/* Embossed Chaplin silhouette */
+.chaplin-silhouette {
+  width: 120px;
+  height: 200px;
+  position: relative;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: silhouetteAppear 2s ease-out 1s forwards;
+}
+@keyframes silhouetteAppear {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 0.15; transform: translateY(0); }
+}
+.chaplin-hat {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 25px;
+  background: #1a1a1a;
+  border-radius: 40px 40px 4px 4px;
+}
+.chaplin-hat-top {
+  position: absolute;
+  top: -18px; left: 50%;
+  transform: translateX(-50%);
+  width: 60px; height: 22px;
+  background: #1a1a1a;
+  border-radius: 30px 30px 0 0;
+}
+.chaplin-head {
+  position: absolute;
+  top: 22px; left: 50%;
+  transform: translateX(-50%);
+  width: 34px; height: 38px;
+  background: #1a1a1a;
+  border-radius: 50%;
+}
+.chaplin-body {
+  position: absolute;
+  top: 58px; left: 50%;
+  transform: translateX(-50%);
+  width: 46px; height: 80px;
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+.chaplin-cane {
+  position: absolute;
+  top: 60px; right: -20px;
+  width: 3px; height: 90px;
+  background: #1a1a1a;
+  transform: rotate(15deg);
+  border-radius: 2px;
+}
 
-    /* ─── CAST (MENU) ─── */
-    .cast-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
-      background: rgba(255,255,255,0.04);
-    }
-    .cast-card {
-      background: var(--black-light); padding: 28px 24px;
-      display: flex; justify-content: space-between; align-items: center;
-      transition: background 0.3s ease, border-color 0.3s ease;
-    }
-    .cast-card:hover { background: rgba(255,255,255,0.04); }
-    .cast-card .role {
-      font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--gold); opacity: 0.5; margin-bottom: 4px;
-    }
-    .cast-card h4 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; }
-    .cast-card p { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
-    .cast-card .price {
-      font-family: var(--font-display); font-size: 1rem; color: var(--gold);
-      white-space: nowrap; margin-left: 16px;
-    }
+.cover-title {
+  font-family: 'Cinzel', serif;
+  font-size: 42px;
+  color: #d4a047;
+  letter-spacing: 12px;
+  text-shadow: 0 0 30px rgba(212,160,71,0.2), 2px 2px 0 rgba(0,0,0,0.5);
+  opacity: 0;
+  animation: fadeInUp 1.2s ease-out 1.8s forwards;
+  position: relative;
+  z-index: 1;
+}
+.cover-sub {
+  font-family: 'Special Elite', monospace;
+  font-size: 11px;
+  color: #8b7355;
+  letter-spacing: 5px;
+  margin-top: 12px;
+  opacity: 0;
+  animation: fadeInUp 1.2s ease-out 2.2s forwards;
+  position: relative;
+  z-index: 1;
+}
+.cover-stamp {
+  position: absolute;
+  bottom: 60px;
+  right: 30px;
+  width: 70px;
+  height: 70px;
+  border: 3px solid #cc0000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: #cc0000;
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: rotate(-15deg) scale(0);
+  animation: stampAppear 1s ease-out 3s forwards;
+}
+@keyframes stampAppear {
+  0% { transform: rotate(-15deg) scale(0); opacity: 0; }
+  60% { transform: rotate(-12deg) scale(1.2); opacity: 1; }
+  100% { transform: rotate(-15deg) scale(1); opacity: 0.8; }
+}
 
-    /* ─── FILM STRIP GALLERY ─── */
-    .film-gallery { padding: 80px 0; overflow: hidden; }
-    .film-scroll {
-      display: flex; gap: 16px;
-      animation: filmRoll 30s linear infinite;
-      width: max-content;
-    }
-    .film-scroll:hover { animation-play-state: paused; }
-    .film-frame {
-      width: 260px; flex-shrink: 0;
-      background: var(--black-light); padding: 8px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .film-frame .frame-img {
-      aspect-ratio: 4/3; background: rgba(255,255,255,0.02);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-display); font-size: 2rem; color: rgba(255,255,255,0.04);
-    }
-    .film-frame .frame-label {
-      font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--text-muted); text-align: center; margin-top: 6px;
-    }
-    .film-sprockets {
-      display: flex; justify-content: space-between; padding: 0 4px; margin-bottom: 4px;
-    }
-    .film-sprockets span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.1); }
-    @keyframes filmRoll {
-      0%{transform:translateX(0)}
-      100%{transform:translateX(-50%)}
-    }
+/* ======== PAGE 1: INTRO (sepia) ======== */
+.page-1 {
+  background: #f5e0c0;
+  z-index: 9;
+}
+.page-1 .page-number {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  font-size: 12px;
+  color: #a08060;
+  font-family: 'Special Elite', monospace;
+}
+.intro-content {
+  max-width: 320px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.intro-content h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  color: #3d2b1f;
+  margin-bottom: 20px;
+  letter-spacing: 3px;
+}
+.intro-content .body-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #4a3520;
+  text-align: left;
+  margin-bottom: 20px;
+}
+.intro-content .body-text em {
+  font-style: italic;
+}
+.intro-margin-note {
+  position: absolute;
+  top: 40px;
+  right: -10px;
+  font-family: 'Caveat', cursive;
+  font-size: 14px;
+  color: #6b4a2a;
+  transform: rotate(3deg);
+  opacity: 0.7;
+}
+.intro-drawing {
+  position: relative;
+  width: 200px;
+  height: 100px;
+  margin: 20px auto;
+}
+.intro-drawing .circle {
+  position: absolute;
+  width: 60px; height: 60px;
+  border: 2px solid #3d2b1f;
+  border-radius: 50%;
+  top: 10px; left: 20px;
+}
+.intro-drawing .circle2 {
+  position: absolute;
+  width: 40px; height: 40px;
+  border: 2px solid #3d2b1f;
+  border-radius: 50%;
+  top: 25px; left: 50px;
+}
+.intro-drawing .line1 {
+  position: absolute;
+  top: 60px; left: 60px;
+  width: 100px; height: 2px;
+  background: #3d2b1f;
+  transform: rotate(-10deg);
+}
+.intro-drawing .line2 {
+  position: absolute;
+  top: 65px; left: 70px;
+  width: 80px; height: 1px;
+  background: #3d2b1f;
+  transform: rotate(5deg);
+}
 
-    /* ─── CONTACT ─── */
-    .contact-scene { background: var(--black-light); }
-    .contact-wrap {
-      max-width: 1000px; margin: 0 auto;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
-    }
-    .contact-info .tag-line {
-      font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 8px;
-    }
-    .contact-info h3 {
-      font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.5rem);
-      font-weight: 600; text-transform: uppercase; margin-bottom: 20px;
-    }
-    .contact-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; color: var(--text-dim); font-size: 0.85rem; }
-    .contact-row svg { width: 14px; height: 14px; color: var(--gold); flex-shrink: 0; }
-    .contact-row a { color: inherit; text-decoration: none; transition: color 0.3s; }
-    .contact-row a:hover { color: var(--gold); }
-    .hours-box { margin-top: 20px; }
-    .hours-box h4 { font-family: var(--font-display); font-size: 0.8rem; color: var(--gold); margin-bottom: 8px; letter-spacing: 0.1em; }
-    .hours-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 24px; }
-    .hours-grid .day { color: var(--text-muted); font-size: 0.8rem; }
-    .hours-grid .time { color: var(--text); font-size: 0.8rem; }
-    .contact-cta-scene {
-      border: 1px solid rgba(245,240,232,0.06); padding: 48px; text-align: center;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
-    }
-    .contact-cta-scene .curtain-icon { font-size: 2rem; opacity: 0.15; }
-    .contact-cta-scene strong { font-family: var(--font-display); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .contact-cta-scene p { color: var(--text-dim); font-size: 0.8rem; }
+/* Coffee stain on page 1 */
+.page-1 .stain {
+  position: absolute;
+  top: 15%;
+  left: 5%;
+  width: 80px;
+  height: 60px;
+  background: radial-gradient(ellipse at 40% 50%, rgba(139,90,43,0.12) 0%, transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: rotate(-20deg);
+}
 
-    footer {
-      padding: 40px; text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.15); font-size: 0.75rem;
-    }
-    footer a { color: var(--gold); text-decoration: none; }
+/* ======== PAGE 2: MENU SPREAD ======== */
+.page-2 {
+  background: #f0dcc0;
+  z-index: 8;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 60px;
+}
 
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .r1 { transition-delay: 0.1s; } .r2 { transition-delay: 0.2s; } .r3 { transition-delay: 0.3s; }
+/* Film frame corner decorations */
+.page-2 .film-corner {
+  position: absolute;
+  width: 40px; height: 40px;
+  border: 2px solid #3d2b1f;
+  pointer-events: none;
+}
+.page-2 .film-corner.tl { top: 15px; left: 15px; border-right: none; border-bottom: none; }
+.page-2 .film-corner.tr { top: 15px; right: 15px; border-left: none; border-bottom: none; }
+.page-2 .film-corner.bl { bottom: 15px; left: 15px; border-right: none; border-top: none; }
+.page-2 .film-corner.br { bottom: 15px; right: 15px; border-left: none; border-top: none; }
 
-    .whatsapp-fab {
-      position: fixed; bottom: 24px; right: 24px; z-index: 99;
-      width: 52px; height: 52px; border-radius: 0;
-      background: #25D366; color: white;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 20px rgba(37,211,102,0.2);
-      transition: transform 0.3s ease; text-decoration: none;
-    }
-    .whatsapp-fab:hover { transform: scale(1.1); }
-    .whatsapp-fab svg { width: 24px; height: 24px; }
+.menu-left, .menu-right {
+  width: 45%;
+  min-width: 140px;
+  position: relative;
+  z-index: 1;
+}
+.menu-left {
+  margin-right: 10px;
+}
+.menu-left h3, .menu-right h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: #3d2b1f;
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+  text-align: center;
+  border-bottom: 1px dashed #a08060;
+  padding-bottom: 8px;
+}
+.menu-item {
+  margin-bottom: 14px;
+  font-size: 11px;
+  color: #4a3520;
+  line-height: 1.5;
+}
+.menu-item .name {
+  font-weight: bold;
+  font-size: 12px;
+}
+.menu-item .role {
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  color: #8b7355;
+}
+.menu-item .price {
+  font-size: 10px;
+  color: #6b4a2a;
+  float: right;
+}
 
-    @media (max-width: 768px) {
-      .nav-links {
-        position: fixed; top: 72px; left: 0; right: 0;
-        background: rgba(10,10,10,0.98); backdrop-filter: blur(12px);
-        flex-direction: column; padding: 16px;
-        transform: translateY(-110%); transition: transform 0.35s ease;
-        border-bottom: 1px solid rgba(255,255,255,0.04);
-      }
-      .nav-links.open { transform: translateY(0); }
-      .nav-toggle { display: block; }
-      nav { padding: 0 20px; }
-      .stage { padding: 100px 24px 60px; }
-      .scene { padding: 60px 24px; }
-      .story-grid { grid-template-columns: 1fr; gap: 32px; }
-      .cast-grid { grid-template-columns: 1fr; }
-      .contact-wrap { grid-template-columns: 1fr; gap: 24px; }
-    }
-  </style>
+/* Typewriter underline */
+.menu-item .name::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: repeating-linear-gradient(to right, #8b7355 0px, #8b7355 3px, transparent 3px, transparent 6px);
+  margin-top: 3px;
+}
+
+/* Menu sketch on right page */
+.menu-sketch {
+  width: 120px;
+  height: 100px;
+  margin: 10px auto 0;
+  position: relative;
+}
+.menu-sketch .plate {
+  position: absolute;
+  top: 20px; left: 20px;
+  width: 80px; height: 25px;
+  border: 2px solid #3d2b1f;
+  border-radius: 50%;
+}
+.menu-sketch .patty {
+  position: absolute;
+  top: 24px; left: 35px;
+  width: 40px; height: 16px;
+  background: rgba(61,43,31,0.2);
+  border-radius: 50%;
+}
+.menu-sketch .steam1, .menu-sketch .steam2, .menu-sketch .steam3 {
+  position: absolute;
+  width: 2px;
+  background: rgba(61,43,31,0.15);
+  border-radius: 2px;
+  animation: steamRise 3s ease-in-out infinite;
+}
+.menu-sketch .steam1 { height: 20px; top: 0; left: 30px; animation-delay: 0s; }
+.menu-sketch .steam2 { height: 15px; top: 2px; left: 42px; animation-delay: 1s; }
+.menu-sketch .steam3 { height: 18px; top: 1px; left: 55px; animation-delay: 0.5s; }
+@keyframes steamRise {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50% { transform: translateY(-10px); opacity: 0.6; }
+}
+
+/* ======== PAGE 3: ATMOSPHERE ======== */
+.page-3 {
+  background: #3d2b1f;
+  z-index: 7;
+  position: relative;
+  overflow: hidden;
+}
+.page-3::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 50% 30%, rgba(212,160,71,0.08) 0%, transparent 50%),
+    linear-gradient(180deg, transparent 0%, rgba(139,90,43,0.1) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Filmstrip along the edge */
+.filmstrip {
+  position: absolute;
+  top: 0;
+  right: 8px;
+  width: 14px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px 0;
+  z-index: 5;
+}
+.filmstrip .sprocket {
+  width: 6px;
+  height: 10px;
+  border: 1px solid rgba(212,160,71,0.3);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Projector beam */
+.projector-beam {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  width: 40%;
+  height: 60%;
+  background: linear-gradient(135deg, rgba(212,160,71,0.06) 0%, rgba(212,160,71,0.02) 40%, transparent 70%);
+  transform: skewX(-10deg) translateX(-20%);
+  pointer-events: none;
+  z-index: 1;
+  animation: beamSweep 8s ease-in-out infinite;
+}
+@keyframes beamSweep {
+  0%, 100% { transform: skewX(-10deg) translateX(-25%); }
+  50% { transform: skewX(-5deg) translateX(-15%); }
+}
+
+/* Theatre seats (CSS shapes) */
+.theatre-seats {
+  position: absolute;
+  bottom: 30%;
+  left: 5%;
+  right: 5%;
+  height: 60px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.theatre-seats .seat {
+  width: 20px;
+  height: 18px;
+  background: rgba(139,0,0,0.4);
+  border-radius: 4px 4px 2px 2px;
+  border-top: 2px solid rgba(139,0,0,0.6);
+}
+
+/* Center content */
+.page-3-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  max-width: 320px;
+  color: #d4a047;
+}
+.page-3-content h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  letter-spacing: 5px;
+  margin-bottom: 16px;
+  opacity: 0.9;
+}
+.page-3-content p {
+  font-family: 'Special Elite', monospace;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #a08060;
+  margin-bottom: 10px;
+}
+
+/* ======== PAGE 4: FINAL FRAME ======== */
+.page-4 {
+  background: #f5e0c0;
+  z-index: 6;
+}
+.page-4-content {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  max-width: 320px;
+}
+.page-4-content .the-end {
+  font-family: 'Cinzel', serif;
+  font-size: 48px;
+  color: #3d2b1f;
+  letter-spacing: 10px;
+  transform: rotate(-2deg);
+  margin-bottom: 30px;
+  opacity: 0.8;
+}
+.page-4-content .credits {
+  font-size: 10px;
+  line-height: 2;
+  color: #6b4a2a;
+  text-align: center;
+}
+.page-4-content .credits span {
+  display: block;
+}
+
+/* Ticket stub */
+.ticket-stub {
+  position: absolute;
+  bottom: 40px;
+  left: 10%;
+  width: 80%;
+  max-width: 280px;
+  background: #f0dcc0;
+  border: 2px dashed #3d2b1f;
+  padding: 14px;
+  font-size: 11px;
+  color: #3d2b1f;
+  z-index: 2;
+  transform: rotate(-1deg);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+.ticket-stub::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  width: 14px; height: 14px;
+  background: #2c1810;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+.ticket-stub .ticket-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.ticket-stub .ticket-label {
+  font-size: 8px;
+  font-family: 'Special Elite', monospace;
+  color: #8b7355;
+  letter-spacing: 2px;
+}
+.ticket-stub .ticket-value {
+  font-size: 12px;
+  font-weight: bold;
+}
+.ticket-stub .whatsapp-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 16px;
+  border: 1px solid #3d2b1f;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  color: #3d2b1f;
+  transition: all 0.3s;
+}
+.ticket-stub .whatsapp-link:active {
+  background: #3d2b1f;
+  color: #f0dcc0;
+}
+
+/* ======== FILMSTRIP NAV ======== */
+.filmstrip-nav {
+  position: fixed;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.filmstrip-nav.visible {
+  opacity: 1;
+}
+.filmstrip-nav .frame {
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgba(212,160,71,0.3);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  background: rgba(212,160,71,0.1);
+}
+.filmstrip-nav .frame.active {
+  border-color: #d4a047;
+  background: rgba(212,160,71,0.3);
+  box-shadow: 0 0 8px rgba(212,160,71,0.3);
+}
+.filmstrip-nav .frame:hover {
+  border-color: #d4a047;
+}
+.filmstrip-nav .frame-label {
+  position: absolute;
+  left: 22px;
+  top: -2px;
+  font-family: 'Special Elite', monospace;
+  font-size: 7px;
+  color: #8b7355;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.filmstrip-nav .frame:hover .frame-label {
+  opacity: 1;
+}
+.filmstrip-nav .frame.active .frame-label {
+  opacity: 1;
+  color: #d4a047;
+}
+
+/* The red line indicator */
+.filmstrip-nav::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  width: 2px;
+  height: 0;
+  background: #cc0000;
+  transition: height 0.3s;
+  top: 0;
+}
+
+/* ======== PAGE DUMPLING EFFECT (paper edge curl) ======== */
+.page-curl {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(225deg, transparent 30%, rgba(61,43,31,0.08) 50%, rgba(61,43,31,0.15) 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ======== ANIMATIONS ======== */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+@keyframes pageShadow {
+  0%, 100% { box-shadow: -4px 0 12px rgba(0,0,0,0.1); }
+  50% { box-shadow: -6px 0 18px rgba(0,0,0,0.15); }
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 400px) {
+  .cover-title { font-size: 32px; letter-spacing: 8px; }
+  .book-spine { width: 180px; height: 260px; }
+  .book-spine .title { font-size: 14px; }
+  .menu-left, .menu-right { width: 100%; min-width: auto; margin: 0; }
+  .menu-right { margin-top: 20px; }
+  .filmstrip-nav { left: 2px; }
+  .filmstrip-nav .frame { width: 12px; height: 12px; }
+  .intro-margin-note { position: relative; top: auto; right: auto; text-align: right; margin-top: 10px; }
+  .page { padding: 20px 15px; }
+  .page-4-content .the-end { font-size: 32px; }
+}
+@media (min-width: 768px) {
+  .page { padding: 60px 40px; }
+  .cover-title { font-size: 56px; }
+  .menu-left, .menu-right { width: 40%; }
+  .intro-content { max-width: 500px; }
+  .intro-content h2 { font-size: 28px; }
+  .book-spine { width: 300px; height: 420px; }
+  .filmstrip-nav .frame { width: 20px; height: 20px; }
+  .page-3-content { max-width: 500px; }
+}
+
+/* ======== SCROLLBAR ======== */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #2c1810; }
+::-webkit-scrollbar-thumb { background: #8b7355; border-radius: 4px; }
+</style>
 </head>
 <body>
-  <div class="curtain-overlay" id="curtains">
-    <div class="curtain-panel curtain-left"></div>
-    <div class="curtain-panel curtain-right"></div>
+
+<!-- ====== BOOK EDGE (pre-loader visual) ====== -->
+<div class="book-edge" id="bookEdge">
+  <div class="book-spine">
+    <div class="title">CHAPLIN</div>
+    <div class="sub">Kordonboyu</div>
   </div>
-  <div class="projector-beam" id="projector"></div>
-  <div class="film-grain"></div>
-  <div class="stage-flicker"></div>
+</div>
 
-  <nav id="nav">
-    <a href="#" class="nav-logo">C<span>haplin</span></a>
-    <button class="nav-toggle" id="navToggle" aria-label="Menü">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
-        <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
-      </svg>
-    </button>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#story">Film</a></li>
-      <li><a href="#menu">Oyuncular</a></li>
-      <li><a href="#atmosfer">Sahne</a></li>
-      <li><a href="#contact">Gişe</a></li>
-      <li><a href="https://wa.me/905312345678" target="_blank" rel="noopener" class="nav-cta">Rezervasyon</a></li>
-    </ul>
-  </nav>
+<!-- ====== PAGE INDICATOR ====== -->
+<div class="page-indicator">
+  <span>↓ sayfayı çevir ↓</span>
+</div>
 
-  <section class="stage">
-    <div class="stage-bg-text">C</div>
-    <div class="stage-spotlight"></div>
-    <div class="stage-content">
-      <div class="stage-reel">Kordonboyu No:109/A</div>
-      <h1>
-        CHAPLIN
-        <em>Sahne &amp; Lezzet</em>
-      </h1>
-      <div class="director">Yönetmen: <span>Charlie Chaplin</span> &bull; Tür: <span>Gastronomi</span></div>
-      <div class="stage-actions">
-        <a href="https://wa.me/905312345678" target="_blank" rel="noopener" class="btn btn-primary">Rezervasyon Yap</a>
-        <a href="#menu" class="btn btn-outline">Oyuncu Kadrosu</a>
+<!-- ====== FILMSTRIP NAV ====== -->
+<nav class="filmstrip-nav" id="filmstripNav">
+  <div class="frame" data-page="0"><span class="frame-label">Kapak</span></div>
+  <div class="frame" data-page="1"><span class="frame-label">Hikâye</span></div>
+  <div class="frame" data-page="2"><span class="frame-label">Menü</span></div>
+  <div class="frame" data-page="3"><span class="frame-label">Atmosfer</span></div>
+  <div class="frame" data-page="4"><span class="frame-label">İletişim</span></div>
+</nav>
+
+<!-- ====== FLIPBOOK CONTAINER ====== -->
+<div class="flipbook-container">
+
+  <!-- COVER -->
+  <section class="page page-cover" id="page0">
+    <div class="cover-content">
+      <div class="chaplin-silhouette">
+        <div class="chaplin-hat"></div>
+        <div class="chaplin-hat-top"></div>
+        <div class="chaplin-head"></div>
+        <div class="chaplin-body"></div>
+        <div class="chaplin-cane"></div>
+      </div>
+      <h1 class="cover-title">CHAPLIN</h1>
+      <p class="cover-sub">✦ KORDONBOYU, BÜYÜKÇEKMECE ✦</p>
+      <div class="cover-stamp">SİNEMA<br>&amp;<br>LEZZET</div>
+    </div>
+  </section>
+
+  <!-- PAGE 1: HİKÂYE -->
+  <section class="page page-1" id="page1">
+    <div class="stain"></div>
+    <div class="intro-content">
+      <div class="intro-margin-note">Kordonboyu 109/A'da</div>
+      <h2>Sessiz Filmin Sesi</h2>
+      <div class="body-text">
+        <em>Charlie Chaplin'in ölümsüz komedisinden ilham alan mekânımız, sadece bir restoran değil — aynı zamanda bir sahne. Her tabak bir performans, her sunum bir sanat eseri.</em><br><br>
+        Kordonboyu'nun eşsiz manzarasında, sessiz filmlerin büyülü atmosferini aratmayan dekorumuzla, unutulmaz bir akşam yemeği deneyimi sunuyoruz.<br><br>
+        — <em>Bir gün gülmek için, bir gün düşünmek için — ama her gün iyi yemek için.</em>
+      </div>
+      <div class="intro-drawing">
+        <div class="circle"></div>
+        <div class="circle2"></div>
+        <div class="line1"></div>
+        <div class="line2"></div>
       </div>
     </div>
-    <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.15);font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;opacity:0;animation:fadeUp 1s ease 3s forwards;">
-      <span>Perde açılıyor</span>
-      <div style="width:1px;height:32px;background:linear-gradient(to bottom,var(--gold),transparent);"></div>
-    </div>
+    <div class="page-number">— 1 —</div>
+    <div class="page-curl"></div>
   </section>
 
-  <section class="intertitle">
-    <div class="intertitle-inner">
-      <div class="ornament">✦ ✦ ✦</div>
-      <div class="act">I. Perde</div>
-      <h2>Bir <em>Film</em> Gibi</h2>
-      <p>Charlie Chaplin'in büyülü dünyasında, her yemeğin bir gösteriye dönüştüğü benzersiz bir deneyim.</p>
-    </div>
-  </section>
-
-  <section class="scene" id="story">
-    <div class="scene-inner">
-      <div class="story-grid">
-        <div class="story-visual reveal">
-          <div class="frame"></div>
-          <div class="quote-mark">"</div>
-        </div>
-        <div class="story-text reveal r1">
-          <div class="tag-line">✦ Hikâye</div>
-          <h3>Sessiz Bir Filmin Büyüsü</h3>
-          <p>Charlie Chaplin'in ölümsüz komedisinden ilham alan mekânımız, sadece bir restoran değil — aynı zamanda bir sahne. Her tabak bir performans, her sunum bir sanat eseri.</p>
-          <p>Kordonboyu'nun eşsiz manzarasında, sessiz filmlerin büyülü atmosferini aratmayan dekorumuzla, unutulmaz bir akşam yemeği deneyimi sunuyoruz.</p>
-          <div class="chaplin-quote">"Bir gün gülmek için, bir gün düşünmek için — ama her gün iyi yemek için."</div>
-        </div>
+  <!-- PAGE 2: MENÜ SPREAD -->
+  <section class="page page-2" id="page2">
+    <div class="film-corner tl"></div>
+    <div class="film-corner tr"></div>
+    <div class="film-corner bl"></div>
+    <div class="film-corner br"></div>
+    
+    <div class="menu-left">
+      <h3>BAŞROL</h3>
+      <div class="menu-item">
+        <div class="name">Chaplin Burger <span class="price">₺245</span></div>
+        <div class="role">Özel sos, cheddar, karamelize soğan, el yapımı patates</div>
+      </div>
+      <div class="menu-item">
+        <div class="name">Melon Şapka Salata <span class="price">₺185</span></div>
+        <div class="role">Keçi peyniri, ceviz, nar ekşisi, roka</div>
+      </div>
+      <div class="menu-item">
+        <div class="name">Bastonlu Makarna <span class="price">₺220</span></div>
+        <div class="role">Trüflü krema, parmesan, mantar</div>
+      </div>
+      <div class="menu-item">
+        <div class="name">Sessiz Film Tabak <span class="price">₺320</span></div>
+        <div class="role">Izgara somon, sebze wok, teriyaki sos</div>
       </div>
     </div>
-  </section>
-
-  <section class="intertitle dark">
-    <div class="intertitle-inner">
-      <div class="act" style="color:var(--gold);">II. Perde</div>
-      <h2><em>Oyuncu</em> Kadrosu</h2>
-      <p>Her biri başrol oyuncusu gibi özenle hazırlanan lezzetler.</p>
-    </div>
-  </section>
-
-  <section class="scene" id="menu" style="padding-top:60px;">
-    <div class="scene-inner">
-      <div class="cast-grid">
-        <div class="cast-card reveal"><div><div class="role">Başrol</div><h4>Chaplin Burger</h4><p>Özel sos, cheddar, karamelize soğan</p></div><span class="price">₺245</span></div>
-        <div class="cast-card reveal r1"><div><div class="role">Yardımcı Oyuncu</div><h4>Melon Şapka Salata</h4><p>Keçi peyniri, ceviz, nar ekşisi, roka</p></div><span class="price">₺185</span></div>
-        <div class="cast-card reveal"><div><div class="role">Konuk Oyuncu</div><h4>Bastonlu Makarna</h4><p>Trüflü krema, parmesan, mantar</p></div><span class="price">₺220</span></div>
-        <div class="cast-card reveal r1"><div><div class="role">Başrol</div><h4>Sessiz Film Tabağı</h4><p>Izgara somon, sebze wok, teriyaki sos</p></div><span class="price">₺320</span></div>
-        <div class="cast-card reveal"><div><div class="role">Özel Gösterim</div><h4>Altın Çağ Pizza</h4><p>Truffle, roka, prosciutto, parmesan</p></div><span class="price">₺260</span></div>
-        <div class="cast-card reveal r1"><div><div class="role">Final</div><h4>Küçük Serseri Tatlısı</h4><p>Çikolatalı fondan, frambuaz sos, dondurma</p></div><span class="price">₺175</span></div>
+    
+    <div class="menu-right">
+      <h3>YARDIMCI OYUNCULAR</h3>
+      <div class="menu-item">
+        <div class="name">Altın Çağ Pizza <span class="price">₺260</span></div>
+        <div class="role">Truffle, roka, prosciutto, parmesan</div>
+      </div>
+      <div class="menu-item">
+        <div class="name">Küçük Serseri Tatlısı <span class="price">₺175</span></div>
+        <div class="role">Çikolatalı fondan, frambuaz sos, dondurma</div>
+      </div>
+      <div class="menu-item">
+        <div class="name">Şapka Şarap <span class="price">₺180</span></div>
+        <div class="role">Kadeh / Şişe seçeneği ile</div>
+      </div>
+      
+      <div class="menu-sketch">
+        <div class="plate"></div>
+        <div class="patty"></div>
+        <div class="steam1"></div>
+        <div class="steam2"></div>
+        <div class="steam3"></div>
       </div>
     </div>
+    
+    <div class="page-curl"></div>
   </section>
 
-  <div class="film-gallery">
-    <div class="film-scroll" id="filmScroll">
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🎬</div><div class="frame-label">Giriş</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🎭</div><div class="frame-label">Sahne</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🍽️</div><div class="frame-label">Lezzet</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🌙</div><div class="frame-label">Gece</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🎵</div><div class="frame-label">Müzik</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🥂</div><div class="frame-label">Kutlama</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🎬</div><div class="frame-label">Giriş</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🎭</div><div class="frame-label">Sahne</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🍽️</div><div class="frame-label">Lezzet</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🌙</div><div class="frame-label">Gece</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🎵</div><div class="frame-label">Müzik</div></div>
-      <div class="film-frame"><div class="film-sprockets"><span></span><span></span><span></span><span></span></div><div class="frame-img">🥂</div><div class="frame-label">Kutlama</div></div>
+  <!-- PAGE 3: ATMOSFER -->
+  <section class="page page-3" id="page3">
+    <div class="filmstrip">
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
+      <div class="sprocket"></div>
     </div>
-  </div>
-
-  <section class="intertitle">
-    <div class="intertitle-inner">
-      <div class="ornament">✦ ✦ ✦</div>
-      <div class="act">III. Perde</div>
-      <h2>Sahne <em>Arkası</em></h2>
-      <p>Her köşesi ayrı bir filmin karesi gibi.</p>
+    <div class="projector-beam"></div>
+    
+    <div class="theatre-seats">
+      <div class="seat"></div>
+      <div class="seat"></div>
+      <div class="seat"></div>
+      <div class="seat"></div>
+      <div class="seat"></div>
+      <div class="seat"></div>
+      <div class="seat"></div>
+      <div class="seat"></div>
     </div>
+    
+    <div class="page-3-content">
+      <h2>✦ PERDE ✦</h2>
+      <p>Sessiz Film Salonu — Chaplin'in unutulmaz kareleri, vintage dekor, loş ışıklar...</p>
+      <p>Kordon Manzarası — Büyükçekmece Kordonboyu'nun eşsiz manzarası eşliğinde açık havada akşam yemeği.</p>
+      <p>Canlı Performans — Hafta sonları caz ve klasik müzik dinletileriyle yemeğinize eşlik.</p>
+    </div>
+    
+    <div class="page-curl"></div>
   </section>
 
-  <section class="scene" id="atmosfer" style="padding-top:60px;">
-    <div class="scene-inner">
-      <div class="cast-grid" style="grid-template-columns:repeat(3,1fr);">
-        <div class="cast-card" style="flex-direction:column;text-align:center;gap:12px;padding:40px 24px;">
-          <div style="font-size:2.5rem;opacity:0.2;">🎞️</div>
-          <h4>Sessiz Film Salonu</h4>
-          <p style="font-size:0.8rem;">Duvarlarda Chaplin kareleri, vintage dekor, loş ışıklar — bir film platosu.</p>
-        </div>
-        <div class="cast-card" style="flex-direction:column;text-align:center;gap:12px;padding:40px 24px;">
-          <div style="font-size:2.5rem;opacity:0.2;">🌊</div>
-          <h4>Kordon Manzarası</h4>
-          <p style="font-size:0.8rem;">Büyükçekmece Kordonboyu'nun eşsiz manzarası eşliğinde açık havada akşam yemeği.</p>
-        </div>
-        <div class="cast-card" style="flex-direction:column;text-align:center;gap:12px;padding:40px 24px;">
-          <div style="font-size:2.5rem;opacity:0.2;">🎷</div>
-          <h4>Canlı Performans</h4>
-          <p style="font-size:0.8rem;">Hafta sonları caz ve klasik müzik dinletileriyle yemeğinize eşlik eden melodiler.</p>
-        </div>
+  <!-- PAGE 4: THE END / İLETİŞİM -->
+  <section class="page page-4" id="page4">
+    <div class="page-4-content">
+      <div class="the-end">THE END</div>
+      <div class="credits">
+        <span>Yönetmen: Şefin Kendisi</span>
+        <span>Görüntü Yönetmeni: Kordonboyu Manzarası</span>
+        <span>Müzik: Hafta Sonu Caz</span>
+        <span>Yapım: Chaplin Cafe &amp; Restaurant</span>
+        <span style="margin-top:12px; font-size:11px;">Kordonboyu Cd. No:109/A, Büyükçekmece</span>
+        <span style="font-size:11px;">0531 234 56 78</span>
       </div>
     </div>
-  </section>
-
-  <section class="scene contact-scene" id="contact">
-    <div class="scene-inner">
-      <div class="contact-wrap">
-        <div class="contact-info reveal">
-          <div class="tag-line">✦ Gişe</div>
-          <h3>Biletinizi Alın</h3>
-          <div class="contact-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Kordonboyu Cd. No:109/A, Büyükçekmece
-          </div>
-          <div class="contact-row">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-            <a href="tel:+905312345678">0531 234 56 78</a>
-          </div>
-          <div class="hours-box">
-            <h4>Seans Saatleri</h4>
-            <div class="hours-grid">
-              <span class="day">Hafta İçi</span><span class="time">10:00 — 23:00</span>
-              <span class="day">Hafta Sonu</span><span class="time">10:00 — 01:00</span>
-            </div>
-          </div>
-        </div>
-        <div class="contact-cta-scene reveal r1">
-          <div class="curtain-icon">🎭</div>
-          <strong>Perde Hiç Kapanmaz</strong>
-          <p>Rezervasyon için bize ulaşın, yeriniz ayrılsın.</p>
-          <a href="https://wa.me/905312345678" target="_blank" rel="noopener" class="btn btn-primary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c 0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            Rezervasyon
-          </a>
-        </div>
+    
+    <div class="ticket-stub">
+      <div class="ticket-row">
+        <span class="ticket-label">FİLM</span>
+        <span class="ticket-value">Chaplin</span>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">TARİH</span>
+        <span class="ticket-value">Her Gün</span>
+      </div>
+      <div class="ticket-row">
+        <span class="ticket-label">KOLTUK</span>
+        <span class="ticket-value">Sizin İçin Ayrıldı</span>
+      </div>
+      <div style="text-align:center; margin-top:10px; border-top: 1px dashed #3d2b1f; padding-top:10px;">
+        <a href="https://wa.me/905312345678" class="whatsapp-link">REZERVASYON</a>
       </div>
     </div>
+    
+    <div class="page-curl"></div>
   </section>
 
-  <footer>
-    <p>© 2026 <a href="#">Chaplin Cafe &amp; Restaurant</a>. Perde hiç kapanmaz. | Kordonboyu, Büyükçekmece</p>
-  </footer>
+</div>
 
-  <a href="https://wa.me/905312345678" target="_blank" rel="noopener" class="whatsapp-fab" aria-label="WhatsApp">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-  </a>
+<script>
+// ======== PAGE VISIBILITY WITH INTERSECTION OBSERVER ========
+const pages = document.querySelectorAll('.page');
+const navFrames = document.querySelectorAll('.filmstrip-nav .frame');
+const filmstripNav = document.getElementById('filmstripNav');
 
-  <script>
-    const nav=document.getElementById('nav'),t=document.getElementById('navToggle'),l=document.getElementById('navLinks');
-    window.addEventListener('scroll',()=>{window.scrollY>60?nav.classList.add('scrolled'):nav.classList.remove('scrolled')});
-    t.addEventListener('click',()=>l.classList.toggle('open'));
-    l.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>l.classList.remove('open')));
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const page = entry.target;
+    if (entry.isIntersecting) {
+      page.classList.add('visible');
+      
+      // Update active nav frame
+      const pageId = page.id;
+      const pageNum = pageId.replace('page', '');
+      navFrames.forEach((frame, i) => {
+        frame.classList.toggle('active', i === parseInt(pageNum));
+      });
+      
+      // Show nav after first page
+      if (pageNum !== '0') {
+        filmstripNav.classList.add('visible');
+      }
+    }
+  });
+}, { threshold: 0.3 });
 
-    const obs=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.classList.add('visible'),obs.unobserve(e.target))})},{threshold:.1});
-    document.querySelectorAll('.reveal').forEach(e=>obs.observe(e));
+pages.forEach(page => observer.observe(page));
 
-    // Curtain open on load
-    setTimeout(()=>{
-      document.getElementById('curtains').classList.add('open');
-      document.getElementById('projector').classList.add('on');
-    }, 500);
+// ======== FILMSTRIP NAV CLICK ========
+navFrames.forEach(frame => {
+  frame.addEventListener('click', () => {
+    const pageIndex = frame.dataset.page;
+    const targetPage = document.getElementById(`page${pageIndex}`);
+    if (targetPage) {
+      targetPage.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
 
-    // Film strip pause on hover
-    const filmScroll=document.getElementById('filmScroll');
-    filmScroll.addEventListener('mouseenter',()=>filmScroll.style.animationPlayState='paused');
-    filmScroll.addEventListener('mouseleave',()=>filmScroll.style.animationPlayState='running');
-  </script>
+// ======== HIDE BOOK EDGE ON SCROLL ========
+let hasScrolled = false;
+window.addEventListener('scroll', () => {
+  if (!hasScrolled && window.scrollY > 50) {
+    hasScrolled = true;
+    document.getElementById('bookEdge').style.opacity = '0';
+    document.getElementById('bookEdge').style.transition = 'opacity 1s';
+    document.querySelector('.page-indicator').style.opacity = '0';
+  }
+}, { passive: true });
+
+// ======== TICKET STUB REVEAL ========
+const ticketObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'rotate(-1deg) scale(1)';
+    }
+  });
+}, { threshold: 0.5 });
+
+const ticket = document.querySelector('.ticket-stub');
+if (ticket) {
+  ticket.style.opacity = '0';
+  ticket.style.transform = 'rotate(-1deg) scale(0.8)';
+  ticket.style.transition = 'all 0.8s ease-out 0.3s';
+  ticketObserver.observe(ticket);
+}
+
+// ======== FADE IN COVER CONTENT ON LOAD ========
+window.addEventListener('load', () => {
+  document.body.classList.add('loaded');
+});
+
+console.log('🎬 Chaplin Flipbook — sayfalar çevriliyor...');
+</script>
 </body>
 </html>
