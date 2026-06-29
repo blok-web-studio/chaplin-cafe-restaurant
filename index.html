@@ -298,8 +298,8 @@ body{background:#0a0a0a;color:#e8e0d8;font-family:'DM Sans',sans-serif;-webkit-f
     const viewH = window.innerHeight;
     const sectionH = rect.height;
 
-    // progress: 0 when section bottom enters viewport, 1 when section top leaves
-    const raw = (viewH - rect.top) / (sectionH - viewH);
+    // progress: 0 when section top reaches viewport top, 1 when section bottom reaches viewport bottom
+    const raw = -rect.top / (sectionH - viewH);
     const progress = Math.max(0, Math.min(1, raw));
 
     const maxTranslate = track.scrollWidth - window.innerWidth;
