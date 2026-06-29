@@ -3,64 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chaplin Cafe & Restaurant — Şimdi Gösterimde</title>
+<title>Chaplin — Cafe & Restaurant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#f5f0e8;color:#1a1a1a;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{background:#0a0a0a;color:#e8e0d8;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-/* top bar */
-.top-bar{position:fixed;top:0;left:0;right:0;z-index:100;background:#1a1a1a;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;height:48px}
-.top-bar h1{font-family:'DM Sans',sans-serif;font-weight:500;font-size:14px;letter-spacing:4px;color:#fff;text-transform:uppercase}
-.now-showing{background:#d4a047;color:#1a1a1a;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border-radius:20px}
+/* ─── MARQUEE HERO ─── */
+.hero{position:relative;width:100%;height:100vh;overflow:hidden;background:#0a0a0a}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.3) brightness(.35);opacity:.6}
+.hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,transparent 30%,#0a0a0a 85%);z-index:1}
+.hero-marquee{position:absolute;top:0;left:0;right:0;height:6px;z-index:2;display:flex;overflow:hidden}
+.hero-marquee-btm{position:absolute;bottom:0;left:0;right:0;height:6px;z-index:2;display:flex;overflow:hidden}
+.marquee-bulb{flex:0 0 12px;height:6px;background:rgba(212,160,71,.15);animation:bulbChase 1.2s infinite linear}
+.marquee-bulb:nth-child(odd){background:rgba(212,160,71,.5);animation-delay:.3s}
+@keyframes bulbChase{0%,100%{opacity:.2}50%{opacity:1}}
 
-/* hero */
-.hero{position:relative;width:100%;height:100vh;margin-top:48px;overflow:hidden}
-.hero img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.2);display:block}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(245,240,232,0)40%,#f5f0e8 95%);display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px 48px}
-.hero-overlay h2{font-family:'Cinzel',serif;font-size:clamp(20px,4vw,36px);font-weight:400;letter-spacing:8px;color:#1a1a1a;text-transform:uppercase}
-.hero-overlay .sub{font-size:clamp(11px,1.5vw,14px);letter-spacing:3px;color:#666;margin-top:6px;text-transform:uppercase}
+/* projector beam */
+.projector-beam{position:absolute;top:-20%;left:-10%;width:60%;height:160%;background:linear-gradient(135deg,rgba(255,240,200,.04) 0%,transparent 70%);transform:rotate(-25deg);z-index:1;animation:beamSweep 12s ease-in-out infinite;pointer-events:none}
+@keyframes beamSweep{0%,100%{transform:rotate(-25deg) translateX(-10%)}50%{transform:rotate(-15deg) translateX(30%)}}
 
-/* film strip section */
-.section-label{text-align:center;padding:60px 24px 12px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:#999;text-transform:uppercase}
-.film-strip-wrap{position:relative;padding:28px 0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.film-strip-wrap::-webkit-scrollbar{display:none}
-.film-strip{display:flex;gap:0;padding:0 24px;position:relative}
+/* hero content */
+.hero-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,160,71,.12);border:1px solid rgba(212,160,71,.3);padding:6px 18px;border-radius:100px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#d4a047;margin-bottom:clamp(20px,4vh,40px);font-weight:500;backdrop-filter:blur(4px)}
+.hero-badge .dot{width:5px;height:5px;border-radius:50%;background:#d4a047;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* sprocket-hole borders using pseudo + actual perf strip */
-.frame{flex:0 0 300px;position:relative;margin:0 -1px 0 0}
-@media(max-width:640px){.frame{flex:0 0 220px}}
+.hero-title{font-family:'Cinzel',serif;font-size:clamp(48px,12vw,140px);font-weight:900;letter-spacing:clamp(8px,2vw,24px);color:transparent;background:linear-gradient(180deg,#f0e0b8 0%,#d4a047 50%,#b8862e 100%);-webkit-background-clip:text;background-clip:text;line-height:.9;text-transform:uppercase;position:relative}
+.hero-title::after{content:'';display:block;width:clamp(60px,12vw,160px);height:2px;background:linear-gradient(90deg,transparent,#d4a047,transparent);margin:clamp(12px,2vh,24px) auto}
+.hero-sub{font-family:'Cinzel',serif;font-size:clamp(11px,1.6vw,18px);letter-spacing:clamp(4px,1vw,10px);color:rgba(232,224,216,.6);font-weight:400;text-transform:uppercase;margin-bottom:8px}
+.hero-meta{display:flex;gap:24px;margin-top:clamp(16px,3vh,32px);font-size:clamp(10px,1.1vw,13px);letter-spacing:2px;color:rgba(232,224,216,.4);text-transform:uppercase}
+.hero-meta span{display:flex;align-items:center;gap:6px}
+.hero-meta .star{color:#d4a047}
+.hero-scroll{position:absolute;bottom:clamp(16px,4vh,40px);left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(232,224,216,.25);font-size:9px;letter-spacing:3px;text-transform:uppercase;animation:fadeUp 3s infinite}
+@keyframes fadeUp{0%,100%{opacity:.3;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(-6px)}}
 
-.frame-inner{position:relative;border:2px solid #1a1a1a;overflow:hidden}
-.frame-inner img{width:100%;height:220px;object-fit:cover;filter:grayscale(1) contrast(1.15);display:block;transition:transform .6s ease}
-@media(max-width:640px){.frame-inner img{height:160px}}
-.frame:hover .frame-inner img{transform:scale(1.05)}
+/* ─── SECTION LABEL ─── */
+.section-label{text-align:center;padding:80px 24px 40px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:rgba(212,160,71,.4);text-transform:uppercase;position:relative}
+.section-label::before,.section-label::after{content:'——';letter-spacing:-2px;color:rgba(212,160,71,.15);margin:0 12px}
 
-/* sprocket holes — top edge */
-.frame-inner::before,.frame-inner::after{content:'';position:absolute;left:0;right:0;height:10px;z-index:2;pointer-events:none}
-.frame-inner::before{top:-2px;background:repeating-linear-gradient(90deg,#f5f0e8 0,#f5f0e8 6px,transparent 6px,transparent 14px,#f5f0e8 14px,#f5f0e8 16px)}
-.frame-inner::after{bottom:-2px;background:repeating-linear-gradient(90deg,#f5f0e8 0,#f5f0e8 6px,transparent 6px,transparent 14px,#f5f0e8 14px,#f5f0e8 16px)}
+/* ─── SCROLL FILM STRIP ─── */
+.film-container{max-width:680px;margin:0 auto;padding:0 24px 60px}
+.film-frame{display:flex;gap:20px;align-items:center;margin-bottom:40px;opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.22,1,.36,1)}
+.film-frame.visible{opacity:1;transform:translateY(0)}
+.film-frame:nth-child(even){flex-direction:row-reverse}
+.film-frame-img{flex:0 0 clamp(180px,30vw,260px);position:relative;padding:8px;background:#1a1a1a;border:1px solid rgba(212,160,71,.15)}
+.film-frame-img img{width:100%;height:clamp(140px,20vw,200px);object-fit:cover;filter:grayscale(.8) contrast(1.1);display:block}
+/* sprocket holes */
+.film-frame-img::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,transparent 0,transparent 4px,#0a0a0a 4px,#0a0a0a 8px);z-index:2}
+.film-frame-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,transparent 0,transparent 4px,#0a0a0a 4px,#0a0a0a 8px);z-index:2}
+.film-frame-text{flex:1}
+.film-frame-text h3{font-family:'Cinzel',serif;font-size:clamp(14px,1.8vw,18px);font-weight:600;letter-spacing:3px;color:#d4a047;text-transform:uppercase;margin-bottom:4px}
+.film-frame-text p{font-size:clamp(12px,1.3vw,14px);color:rgba(232,224,216,.55);letter-spacing:.3px;line-height:1.6}
+.film-frame-text .tag{display:inline-block;margin-top:8px;font-size:9px;letter-spacing:2px;color:rgba(232,224,216,.3);text-transform:uppercase;background:rgba(212,160,71,.08);padding:3px 10px;border-radius:100px}
 
-/* left/right perforation strips */
-.frame-inner .perf-l,.frame-inner .perf-r{position:absolute;top:0;bottom:0;width:10px;z-index:2;pointer-events:none}
-.frame-inner .perf-l{left:-2px;background:repeating-linear-gradient(180deg,#f5f0e8 0,#f5f0e8 6px,transparent 6px,transparent 14px,#f5f0e8 14px,#f5f0e8 16px)}
-.frame-inner .perf-r{right:-2px;background:repeating-linear-gradient(180deg,#f5f0e8 0,#f5f0e8 6px,transparent 6px,transparent 14px,#f5f0e8 14px,#f5f0e8 16px)}
+/* divider dots */
+.reel-divider{text-align:center;padding:10px 0 30px;color:rgba(212,160,71,.2);font-size:8px;letter-spacing:8px}
 
-.frame-caption{text-align:center;padding:14px 0 6px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;font-weight:600;color:#1a1a1a;text-transform:uppercase}
-.frame-caption small{display:block;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:1px;color:#999;font-weight:400;margin-top:2px}
-
-/* spacing between frames — reel connector */
-.reel-gap{flex:0 0 32px;position:relative;min-height:240px}
-@media(max-width:640px){.reel-gap{flex:0 0 20px;min-height:180px}}
-.reel-gap::before{content:'\25CF';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#1a1a1a;font-size:12px}
-
-/* film credits section */
-.credits-wrap{position:relative;margin:100px 0 0;background:#000;overflow:hidden;height:600px}
+/* ─── CREDITS ─── */
+.credits-wrap{position:relative;margin:40px 0 0;background:#000;overflow:hidden;height:600px}
 .credits-mask{position:absolute;inset:0;background:linear-gradient(180deg,#000 0%,transparent 10%,transparent 85%,#000 100%);z-index:2;pointer-events:none}
 .credits-scroll{position:absolute;bottom:0;left:0;right:0;padding:0 24px;animation:scrollCredits 28s linear infinite}
 @keyframes scrollCredits{0%{transform:translateY(0)}100%{transform:translateY(-72%)}}
-
 .credits-scroll h3{font-family:'Cinzel',serif;font-size:clamp(16px,3vw,24px);font-weight:400;letter-spacing:6px;text-align:center;color:#d4a047;text-transform:uppercase;padding:40px 0 20px}
 .credits-scroll .role{font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:4px;color:#666;text-transform:uppercase;text-align:center;padding:24px 0 10px}
 .credits-scroll .credit-item{display:flex;justify-content:space-between;align-items:baseline;font-size:clamp(14px,2vw,17px);padding:4px 0;max-width:480px;margin:0 auto;color:#e8e8e8}
@@ -68,111 +73,174 @@ body{background:#f5f0e8;color:#1a1a1a;font-family:'DM Sans',sans-serif;-webkit-f
 .credits-scroll .credit-item .dots{flex:1;border-bottom:1px dotted rgba(255,255,255,.25);margin:0 8px;min-width:20px}
 .credits-scroll .credit-item .price{font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:1px;color:#d4a047}
 
-/* the end */
-.the-end{text-align:center;padding:100px 24px 60px;background:#f5f0e8}
-.the-end h2{font-family:'Cinzel',serif;font-size:clamp(42px,8vw,72px);font-weight:700;letter-spacing:12px;color:#1a1a1a;text-transform:uppercase;line-height:1}
-.the-end .tagline{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3px;color:#999;margin-top:12px;text-transform:uppercase}
+/* ─── THE END ─── */
+.the-end{text-align:center;padding:100px 24px 60px;background:#0a0a0a;position:relative}
+.the-end::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(212,160,71,.3),transparent)}
+.the-end h2{font-family:'Cinzel',serif;font-size:clamp(42px,8vw,72px);font-weight:700;letter-spacing:12px;color:transparent;background:linear-gradient(180deg,#e8e0d8,#8a8078);-webkit-background-clip:text;background-clip:text;text-transform:uppercase;line-height:1}
+.the-end .tagline{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3px;color:rgba(232,224,216,.3);margin-top:12px;text-transform:uppercase}
 
-/* ticket stub cta */
-.ticket{display:inline-flex;align-items:center;gap:16px;margin:32px auto 0;padding:14px 32px;background:#1a1a1a;position:relative;cursor:pointer;transition:all .3s ease}
-.ticket::before,.ticket::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#f5f0e8}
+/* ticket cta */
+.ticket{display:inline-flex;align-items:center;gap:16px;margin:32px auto 0;padding:14px 32px;background:transparent;border:1px solid rgba(212,160,71,.3);position:relative;cursor:pointer;transition:all .4s ease}
+.ticket::before,.ticket::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#0a0a0a}
 .ticket::before{top:-10px;left:-10px}
 .ticket::after{bottom:-10px;right:-10px}
-.ticket:hover{transform:scale(1.03);background:#d4a047}
-.ticket:hover span{color:#1a1a1a}
-.ticket span{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#fff;transition:color .3s}
-.ticket .tear{font-family:'Cinzel',serif;font-size:10px;color:#666;transition:color .3s}
-.ticket:hover .tear{color:#1a1a1a}
+.ticket:hover{background:rgba(212,160,71,.1);border-color:#d4a047;transform:scale(1.02)}
+.ticket span{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#d4a047;transition:color .3s}
+.ticket .tear{font-family:'Cinzel',serif;font-size:10px;color:rgba(212,160,71,.3)}
+.ticket:hover span{color:#f0e0b8}
 
-/* contact */
-.contact{text-align:center;padding:40px 24px 60px;background:#f5f0e8}
-.contact p{font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;color:#999;margin-bottom:4px}
-.contact a{color:#1a1a1a;text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:500}
+/* ─── CONTACT ─── */
+.contact{text-align:center;padding:40px 24px 60px;background:#0a0a0a}
+.contact p{font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;color:rgba(232,224,216,.25);margin-bottom:4px}
+.contact a{color:rgba(212,160,71,.6);text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:500;transition:color .3s}
 .contact a:hover{color:#d4a047}
 
-/* scroll hint */
-.scroll-hint{text-align:center;padding:20px 24px 40px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:3px;color:#ccc;text-transform:uppercase;background:#000}
-
-/* responsive */
 @media(max-width:640px){
-.top-bar{padding:10px 16px}
-.hero{height:80vh}
-.hero-overlay{padding:0 16px 32px}
+.hero{height:90vh}
+.film-frame,.film-frame:nth-child(even){flex-direction:column;align-items:flex-start;gap:12px}
+.film-frame-img{flex:unset;width:100%}
+.film-frame-img img{height:clamp(180px,40vw,260px)}
 .credits-wrap{height:450px}
 }
 </style>
 </head>
 <body>
 
-<div class="top-bar">
-  <h1>Chaplin</h1>
-  <span class="now-showing">Now Showing</span>
-</div>
-
+<!-- ─── HERO ─── -->
 <section class="hero">
-  <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAG1-sgBVKuGJcJGnKTujIV7RmnFXNKP0fETe_y1Rv0_vPMjXsM52_piOv89kJ2drZHP2JrNK7_ml3XLCkDjioWix0-8feCa3tQZx_dibnW3eatz4V31HuQZrVJepcHYcV_l4sPUWw=w1600-h900-k-no" alt="Chaplin Cafe & Restaurant">
-  <div class="hero-overlay">
-    <h2>Cafe &amp; Restaurant</h2>
-    <div class="sub">Kordonboyu Cd. · Büyükçekmece</div>
+  <img class="hero-bg" src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAG1-sgBVKuGJcJGnKTujIV7RmnFXNKP0fETe_y1Rv0_vPMjXsM52_piOv89kJ2drZHP2JrNK7_ml3XLCkDjioWix0-8feCa3tQZx_dibnW3eatz4V31HuQZrVJepcHYcV_l4sPUWw=w1920-h1080-k-no" alt="">
+  <div class="hero-vignette"></div>
+  <div class="projector-beam"></div>
+  
+  <!-- marquee bulbs -->
+  <div class="hero-marquee" id="bulbs">${'<div class="marquee-bulb"></div>'.repeat(120)}</div>
+  <div class="hero-marquee-btm">${'<div class="marquee-bulb"></div>'.repeat(120)}</div>
+
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span>Şimdi Gösterimde</div>
+    <h1 class="hero-title">Chaplin</h1>
+    <p class="hero-sub">Cafe &amp; Restaurant</p>
+    <div class="hero-meta">
+      <span>Kordonboyu Cd. · Büyükçekmece</span>
+      <span class="star">★</span>
+      <span>4.1</span>
+      <span>0212 883 81 40</span>
+    </div>
   </div>
+
+  <div class="hero-scroll">Filmi başlat</div>
 </section>
 
-<div class="section-label">— Film Şeridi —</div>
+<!-- ─── FILM STRIP (SCROLL ANIMATION) ─── -->
+<div class="section-label">Film Şeridi</div>
 
-<div class="film-strip-wrap">
-  <div class="film-strip">
+<div class="film-container">
 
-    <div class="frame">
-      <div class="frame-inner">
-        <span class="perf-l"></span><span class="perf-r"></span>
-        <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHsUpTiaPBxTTsyq3hs3KSH78VXrWozufADdXI9RB2aIJvr8BsEhkpLYI2rseHKm0CpFG-b9jIxukDuUqz8_k_XqVbW8xDzavian0nqWUOO5uD3xXH2WSaNr0HbIyEEcOW-LjOv=w400-h300-k-no" alt="Kahvaltı">
-      </div>
-      <div class="frame-caption">Kahvaltı<small>Serpme · 08:00–13:00</small></div>
+  <div class="film-frame">
+    <div class="film-frame-img">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHsUpTiaPBxTTsyq3hs3KSH78VXrWozufADdXI9RB2aIJvr8BsEhkpLYI2rseHKm0CpFG-b9jIxukDuUqz8_k_XqVbW8xDzavian0nqWUOO5uD3xXH2WSaNr0HbIyEEcOW-LjOv=w600-h500-k-no" alt="Kahvaltı" loading="lazy">
     </div>
-
-    <div class="reel-gap"></div>
-
-    <div class="frame">
-      <div class="frame-inner">
-        <span class="perf-l"></span><span class="perf-r"></span>
-        <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHLM6fTZcdnDj06vRtMTOdf7JnXTKv0XdbEswXMMgXmzl-AFFVTWbChwH3WpiyOdf8Yx6ny1AdtiqPk6OmvjoTGKW--Ulh90ZLRxk2JtqW0jkozUTmrbhEA3gqANGUAvtpSm26jLA=w400-h300-k-no" alt="Makarna">
-      </div>
-      <div class="frame-caption">Makarna<small>El yapımı · Her gün</small></div>
+    <div class="film-frame-text">
+      <h3>Serpme Kahvaltı</h3>
+      <p>Güne başlamanın en güzel yolu. Taze peynirler, zeytinler, reçeller ve sıcacık çay eşliğinde keyifli bir sabah.</p>
+      <span class="tag">08:00–13:00 · 190₺</span>
     </div>
-
-    <div class="reel-gap"></div>
-
-    <div class="frame">
-      <div class="frame-inner">
-        <span class="perf-l"></span><span class="perf-r"></span>
-        <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGZf-uAe_owBjXHH2w304jrCMsLJl-6uxE2F3WpsrknsWRvgLZgGBe9Q_OMRYh15MYHO-zr13VF7YQWLpI1kF-JpUM7Te9pCW3Uu0EzaJ2vEn7o9SQzPIzoI8mfcfrMhGaMUOw=w400-h300-k-no" alt="Tatlı">
-      </div>
-      <div class="frame-caption">Tatlı<small>Günlük · Pastane</small></div>
-    </div>
-
-    <div class="reel-gap"></div>
-
-    <div class="frame">
-      <div class="frame-inner">
-        <span class="perf-l"></span><span class="perf-r"></span>
-        <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSq3hbHkBaoxbKEEdQ24p8v1CGL1VdIsJJaCu5e0WPBwy4HP1JoToHAvCcD1r3Eg6zilponGK-Y66g3w7SLnzVF3MzXxZ5QNVjUX3pIRU61-RyfX62o71X3Ycs4gk7ddl2hx7X=w400-h300-k-no" alt="Kahve">
-      </div>
-      <div class="frame-caption">Kahve<small>Filter · Espresso · Soğuk</small></div>
-    </div>
-
-    <div class="reel-gap"></div>
-
-    <div class="frame">
-      <div class="frame-inner">
-        <span class="perf-l"></span><span class="perf-r"></span>
-        <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAEEAZJXJaJ6Fxc1H6iDoza74JtwyizJ-irTgmzgySJeFXa2Wly2vKTll_pgjYxdWeE1HihJJhUaUyvTiUOJE333odC81QLShJW4VsxVDu3nAfdsmpBpUt9AU671D5U6G-0Y2u-tzgZHxlQw=w400-h300-k-no" alt="Nargile">
-      </div>
-      <div class="frame-caption">Nargile<small>55 çeşit · Her akşam</small></div>
-    </div>
-
   </div>
+
+  <div class="reel-divider">● ● ● ● ●</div>
+
+  <div class="film-frame">
+    <div class="film-frame-img">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHLM6fTZcdnDj06vRtMTOdf7JnXTKv0XdbEswXMMgXmzl-AFFVTWbChwH3WpiyOdf8Yx6ny1AdtiqPk6OmvjoTGKW--Ulh90ZLRxk2JtqW0jkozUTmrbhEA3gqANGUAvtpSm26jLA=w600-h500-k-no" alt="Makarna" loading="lazy">
+    </div>
+    <div class="film-frame-text">
+      <h3>El Yapımı Makarna</h3>
+      <p>Her gün taze hazırlanan makarnalar, özel soslar ve İtalyan lezzetleriyle buluşuyor. Truffle makarna imza yemeğimiz.</p>
+      <span class="tag">Her gün · 165₺</span>
+    </div>
+  </div>
+
+  <div class="reel-divider">● ● ● ● ●</div>
+
+  <div class="film-frame">
+    <div class="film-frame-img">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGZf-uAe_owBjXHH2w304jrCMsLJl-6uxE2F3WpsrknsWRvgLZgGBe9Q_OMRYh15MYHO-zr13VF7YQWLpI1kF-JpUM7Te9pCW3Uu0EzaJ2vEn7o9SQzPIzoI8mfcfrMhGaMUOw=w600-h500-k-no" alt="Tatlı" loading="lazy">
+    </div>
+    <div class="film-frame-text">
+      <h3>Günlük Tatlılar</h3>
+      <p>Pastane usulü taze tatlılar, günlük hazırlanan tiramisu ve mevsim spesiyalleri ile tatlı bir mola verin.</p>
+      <span class="tag">Günlük · 110₺</span>
+    </div>
+  </div>
+
+  <div class="reel-divider">● ● ● ● ●</div>
+
+  <div class="film-frame">
+    <div class="film-frame-img">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSq3hbHkBaoxbKEEdQ24p8v1CGL1VdIsJJaCu5e0WPBwy4HP1JoToHAvCcD1r3Eg6zilponGK-Y66g3w7SLnzVF3MzXxZ5QNVjUX3pIRU61-RyfX62o71X3Ycs4gk7ddl2hx7X=w600-h500-k-no" alt="Kahve" loading="lazy">
+    </div>
+    <div class="film-frame-text">
+      <h3>Filtre Kahve & Espresso</h3>
+      <p>Özenle seçilmiş çekirdeklerden hazırlanan kahveler, soğuk demleme çeşitleri ve klasik espresso keyfi.</p>
+      <span class="tag">Filter · Espresso · Soğuk · 65₺</span>
+    </div>
+  </div>
+
+  <div class="reel-divider">● ● ● ● ●</div>
+
+  <div class="film-frame">
+    <div class="film-frame-img">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAEEAZJXJaJ6Fxc1H6iDoza74JtwyizJ-irTgmzgySJeFXa2Wly2vKTll_pgjYxdWeE1HihJJhUaUyvTiUOJE333odC81QLShJW4VsxVDu3nAfdsmpBpUt9AU671D5U6G-0Y2u-tzgZHxlQw=w600-h500-k-no" alt="Nargile" loading="lazy">
+    </div>
+    <div class="film-frame-text">
+      <h3>Nargile Keyfi</h3>
+      <p>55 çeşit nargile seçeneğiyle akşam saatlerinde keyifli bir mola. Arkadaşlarınızla sohbetin tamamlayıcısı.</p>
+      <span class="tag">Her akşam · 110₺'den başlayan</span>
+    </div>
+  </div>
+
+  <div class="reel-divider">● ● ● ● ●</div>
+
+  <div class="film-frame">
+    <div class="film-frame-img">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGFtixkPZDh_odse8v1QRJ4dv-7wo7lPPuAAwYyHUac6NhfImYsGYCg8hSR7APr11exYt6y7Xl8_FRFDfBYWbCQo0R4EE866NRviQPmA_HNQJLvdmxCqyAUI9DMp6Spj9DlnKbfVg=w600-h500-k-no" alt="Chaplin İç Mekan" loading="lazy">
+    </div>
+    <div class="film-frame-text">
+      <h3>Sıcak Atmosfer</h3>
+      <p>Kordonboyu'nun kalbinde, samimi ve sıcak bir ortam. Aileniz ve arkadaşlarınızla keyifli vakit geçirin.</p>
+      <span class="tag">İç mekan · Dış mekan</span>
+    </div>
+  </div>
+
+  <div class="reel-divider">● ● ● ● ●</div>
+
+  <div class="film-frame">
+    <div class="film-frame-img">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGScy8vAe-7xWqfDjkuG-ZIHnpALki7kPOntrRUx7HTml5-iCP8smQfGfOIdwZCY5AIMN1BZaQ1L8zTbuV6YKyqFS38xmTG75rMKfRmWwHbG82RDiH21c4z_y6DaCCmtL7MK9Y=w600-h500-k-no" alt="Chaplin Burger" loading="lazy">
+    </div>
+    <div class="film-frame-text">
+      <h3>Chaplin Burger</h3>
+      <p>Izgara etin mükemmel lezzeti, özel soslar ve taze malzemelerle hazırlanan imza burgerimiz.</p>
+      <span class="tag">Her gün · 175₺</span>
+    </div>
+  </div>
+
+  <div class="reel-divider">● ● ● ● ●</div>
+
+  <div class="film-frame">
+    <div class="film-frame-img">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFESNGVY-xq01eaF07PB9gcJenlcqfP_ZHNGpXpyVcWXOKpZLTNKifbeoqXyr7_gpq9oCmhoabzkI2UdjKAQd0twFP7H2L_0RzktrjBtu6qhicyt3htB51WFhHvYibG-IdOukGfJQ=w600-h500-k-no" alt="Izgara Somon" loading="lazy">
+    </div>
+    <div class="film-frame-text">
+      <h3>Izgara Somon</h3>
+      <p>Taze somon, özel marine ile ızgarada mükemmel kıvamında pişirilir. Yanında mevsim sebzeleriyle servis edilir.</p>
+      <span class="tag">Her gün · 245₺</span>
+    </div>
+  </div>
+
 </div>
 
+<!-- ─── CREDITS ─── -->
 <section class="credits-wrap">
   <div class="credits-mask"></div>
   <div class="credits-scroll">
@@ -205,19 +273,19 @@ body{background:#f5f0e8;color:#1a1a1a;font-family:'DM Sans',sans-serif;-webkit-f
     <div class="credit-item"><span class="name">Filtre Kahve</span><span class="dots"></span><span class="price">65₺</span></div>
 
     <h3 style="padding-top:60px">Direktör</h3>
-    <div class="credit-item" style="justify-content:center"><span class="name">Aile &middot; Lezzet &middot; Gelenek</span></div>
+    <div class="credit-item" style="justify-content:center"><span class="name">Aile · Lezzet · Gelenek</span></div>
     <div class="credit-item" style="justify-content:center;padding-top:20px"><span class="name" style="font-size:12px;color:#666">Yapımcı: BLOK. Studio</span></div>
 
   </div>
 </section>
 
-<div class="scroll-hint">— Sonsuza Dek —</div>
+<div style="text-align:center;padding:24px;font-family:'DM Sans',sans-serif;font-size:9px;letter-spacing:4px;color:rgba(232,224,216,.15);text-transform:uppercase;background:#000">— Sonsuza Dek —</div>
 
 <section class="the-end">
   <h2>The End</h2>
   <div class="tagline">Ama hikaye hala devam ediyor</div>
 
-  <a href="https://wa.me/905555555555" style="text-decoration:none">
+  <a href="tel:+902128838140" style="text-decoration:none">
     <div class="ticket">
       <span>Rezervasyon Yap</span>
       <span class="tear">&#x2713;</span>
@@ -231,6 +299,19 @@ body{background:#f5f0e8;color:#1a1a1a;font-family:'DM Sans',sans-serif;-webkit-f
   &nbsp;&middot;&nbsp;
   <a href="https://instagram.com">@chaplincafe</a>
 </section>
+
+<script>
+// IntersectionObserver for scroll-triggered film frames
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.film-frame').forEach(el => observer.observe(el));
+</script>
 
 </body>
 </html>
