@@ -2,1060 +2,235 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Chaplin — Flipbook</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaplin Cafe & Restaurant — Şimdi Gösterimde</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Special+Elite&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  background: #2c1810;
-  font-family: 'Special Elite', monospace;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f0e8;color:#1a1a1a;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-/* ======== THE FLIPBOOK STACK ======== */
-.flipbook-container {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  perspective: 1200px;
-}
+/* top bar */
+.top-bar{position:fixed;top:0;left:0;right:0;z-index:100;background:#1a1a1a;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;height:48px}
+.top-bar h1{font-family:'DM Sans',sans-serif;font-weight:500;font-size:14px;letter-spacing:4px;color:#fff;text-transform:uppercase}
+.now-showing{background:#d4a047;color:#1a1a1a;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border-radius:20px}
 
-/* The book edge visible on first load */
-.book-edge {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  pointer-events: none;
-  opacity: 0;
-  animation: bookAppear 1.5s ease-out 0.5s forwards;
-}
-@keyframes bookAppear {
-  0% { opacity: 0; transform: scale(1.1); }
-  100% { opacity: 1; transform: scale(1); }
-}
+/* hero */
+.hero{position:relative;width:100%;height:100vh;margin-top:48px;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.2);display:block}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(245,240,232,0)40%,#f5f0e8 95%);display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px 48px}
+.hero-overlay h2{font-family:'Cinzel',serif;font-size:clamp(20px,4vw,36px);font-weight:400;letter-spacing:8px;color:#1a1a1a;text-transform:uppercase}
+.hero-overlay .sub{font-size:clamp(11px,1.5vw,14px);letter-spacing:3px;color:#666;margin-top:6px;text-transform:uppercase}
 
-.book-spine {
-  width: 240px;
-  height: 340px;
-  background: #5c3d2e;
-  border-radius: 4px 12px 12px 4px;
-  position: relative;
-  box-shadow: 8px 8px 30px rgba(0,0,0,0.6), inset -2px 0 8px rgba(0,0,0,0.3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transform: rotateY(5deg);
-  border-left: 3px solid #8b6914;
-}
-.book-spine::after {
-  content: '';
-  position: absolute;
-  top: 20px; bottom: 20px; right: 8px;
-  width: 2px;
-  background: linear-gradient(to bottom, transparent, #8b6914 30%, #8b6914 70%, transparent);
-}
-.book-spine .title {
-  font-family: 'Cinzel', serif;
-  font-size: 18px;
-  color: #d4a047;
-  letter-spacing: 6px;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  text-shadow: 0 0 10px rgba(212,160,71,0.3);
-}
-.book-spine .sub {
-  font-family: 'Special Elite', monospace;
-  font-size: 9px;
-  color: #8b7355;
-  margin-top: 20px;
-  letter-spacing: 3px;
-}
+/* film strip section */
+.section-label{text-align:center;padding:60px 24px 12px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:#999;text-transform:uppercase}
+.film-strip-wrap{position:relative;padding:28px 0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.film-strip-wrap::-webkit-scrollbar{display:none}
+.film-strip{display:flex;gap:0;padding:0 24px;position:relative}
 
-/* Page turn indicator */
-.page-indicator {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 99;
-  font-family: 'Special Elite', monospace;
-  font-size: 12px;
-  color: #8b7355;
-  opacity: 0;
-  animation: fadeInUp 1s ease-out 2.5s forwards;
-  pointer-events: none;
-  letter-spacing: 2px;
-}
-.page-indicator span {
-  display: inline-block;
-  animation: scrollBounce 2s ease-in-out infinite;
-}
-@keyframes scrollBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(5px); }
-}
+/* sprocket-hole borders using pseudo + actual perf strip */
+.frame{flex:0 0 300px;position:relative;margin:0 -1px 0 0}
+@media(max-width:640px){.frame{flex:0 0 220px}}
 
-/* ======== PAGES ======== */
-.page {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  opacity: 0;
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-  transform: translateY(40px) rotateX(2deg);
-}
-.page.visible {
-  opacity: 1;
-  transform: translateY(0) rotateX(0);
-}
+.frame-inner{position:relative;border:2px solid #1a1a1a;overflow:hidden}
+.frame-inner img{width:100%;height:220px;object-fit:cover;filter:grayscale(1) contrast(1.15);display:block;transition:transform .6s ease}
+@media(max-width:640px){.frame-inner img{height:160px}}
+.frame:hover .frame-inner img{transform:scale(1.05)}
 
-/* Paper texture overlay */
-.page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,90,43,0.03) 2px, rgba(139,90,43,0.03) 3px);
-  pointer-events: none;
-  z-index: 0;
-}
+/* sprocket holes — top edge */
+.frame-inner::before,.frame-inner::after{content:'';position:absolute;left:0;right:0;height:10px;z-index:2;pointer-events:none}
+.frame-inner::before{top:-2px;background:repeating-linear-gradient(90deg,#f5f0e8 0,#f5f0e8 6px,transparent 6px,transparent 14px,#f5f0e8 14px,#f5f0e8 16px)}
+.frame-inner::after{bottom:-2px;background:repeating-linear-gradient(90deg,#f5f0e8 0,#f5f0e8 6px,transparent 6px,transparent 14px,#f5f0e8 14px,#f5f0e8 16px)}
 
-/* Page edge curl shadow */
-.page::after {
-  content: '';
-  position: absolute;
-  bottom: -20px;
-  left: 10%;
-  right: 10%;
-  height: 40px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15), transparent);
-  pointer-events: none;
-  z-index: 0;
-}
+/* left/right perforation strips */
+.frame-inner .perf-l,.frame-inner .perf-r{position:absolute;top:0;bottom:0;width:10px;z-index:2;pointer-events:none}
+.frame-inner .perf-l{left:-2px;background:repeating-linear-gradient(180deg,#f5f0e8 0,#f5f0e8 6px,transparent 6px,transparent 14px,#f5f0e8 14px,#f5f0e8 16px)}
+.frame-inner .perf-r{right:-2px;background:repeating-linear-gradient(180deg,#f5f0e8 0,#f5f0e8 6px,transparent 6px,transparent 14px,#f5f0e8 14px,#f5f0e8 16px)}
 
-/* ======== COVER PAGE ======== */
-.page-cover {
-  background: #3d2b1f;
-  min-height: 100vh;
-  padding: 0;
-  position: relative;
-  z-index: 10;
-}
-.page-cover::before { display: none; }
-.page-cover::after { display: none; }
+.frame-caption{text-align:center;padding:14px 0 6px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;font-weight:600;color:#1a1a1a;text-transform:uppercase}
+.frame-caption small{display:block;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:1px;color:#999;font-weight:400;margin-top:2px}
 
-.cover-content {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background: 
-    radial-gradient(ellipse at 50% 40%, rgba(212,160,71,0.08) 0%, transparent 60%),
-    linear-gradient(135deg, #3d2b1f 0%, #2c1810 50%, #3d2b1f 100%);
-}
+/* spacing between frames — reel connector */
+.reel-gap{flex:0 0 32px;position:relative;min-height:240px}
+@media(max-width:640px){.reel-gap{flex:0 0 20px;min-height:180px}}
+.reel-gap::before{content:'\25CF';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#1a1a1a;font-size:12px}
 
-/* Embossed Chaplin silhouette */
-.chaplin-silhouette {
-  width: 120px;
-  height: 200px;
-  position: relative;
-  margin-bottom: 20px;
-  opacity: 0;
-  animation: silhouetteAppear 2s ease-out 1s forwards;
-}
-@keyframes silhouetteAppear {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 0.15; transform: translateY(0); }
-}
-.chaplin-hat {
-  position: absolute;
-  top: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 80px; height: 25px;
-  background: #1a1a1a;
-  border-radius: 40px 40px 4px 4px;
-}
-.chaplin-hat-top {
-  position: absolute;
-  top: -18px; left: 50%;
-  transform: translateX(-50%);
-  width: 60px; height: 22px;
-  background: #1a1a1a;
-  border-radius: 30px 30px 0 0;
-}
-.chaplin-head {
-  position: absolute;
-  top: 22px; left: 50%;
-  transform: translateX(-50%);
-  width: 34px; height: 38px;
-  background: #1a1a1a;
-  border-radius: 50%;
-}
-.chaplin-body {
-  position: absolute;
-  top: 58px; left: 50%;
-  transform: translateX(-50%);
-  width: 46px; height: 80px;
-  background: #1a1a1a;
-  border-radius: 4px;
-}
-.chaplin-cane {
-  position: absolute;
-  top: 60px; right: -20px;
-  width: 3px; height: 90px;
-  background: #1a1a1a;
-  transform: rotate(15deg);
-  border-radius: 2px;
-}
+/* film credits section */
+.credits-wrap{position:relative;margin:100px 0 0;background:#000;overflow:hidden;height:600px}
+.credits-mask{position:absolute;inset:0;background:linear-gradient(180deg,#000 0%,transparent 10%,transparent 85%,#000 100%);z-index:2;pointer-events:none}
+.credits-scroll{position:absolute;bottom:0;left:0;right:0;padding:0 24px;animation:scrollCredits 28s linear infinite}
+@keyframes scrollCredits{0%{transform:translateY(0)}100%{transform:translateY(-72%)}}
 
-.cover-title {
-  font-family: 'Cinzel', serif;
-  font-size: 42px;
-  color: #d4a047;
-  letter-spacing: 12px;
-  text-shadow: 0 0 30px rgba(212,160,71,0.2), 2px 2px 0 rgba(0,0,0,0.5);
-  opacity: 0;
-  animation: fadeInUp 1.2s ease-out 1.8s forwards;
-  position: relative;
-  z-index: 1;
-}
-.cover-sub {
-  font-family: 'Special Elite', monospace;
-  font-size: 11px;
-  color: #8b7355;
-  letter-spacing: 5px;
-  margin-top: 12px;
-  opacity: 0;
-  animation: fadeInUp 1.2s ease-out 2.2s forwards;
-  position: relative;
-  z-index: 1;
-}
-.cover-stamp {
-  position: absolute;
-  bottom: 60px;
-  right: 30px;
-  width: 70px;
-  height: 70px;
-  border: 3px solid #cc0000;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Cinzel', serif;
-  font-size: 10px;
-  color: #cc0000;
-  letter-spacing: 2px;
-  opacity: 0;
-  transform: rotate(-15deg) scale(0);
-  animation: stampAppear 1s ease-out 3s forwards;
-}
-@keyframes stampAppear {
-  0% { transform: rotate(-15deg) scale(0); opacity: 0; }
-  60% { transform: rotate(-12deg) scale(1.2); opacity: 1; }
-  100% { transform: rotate(-15deg) scale(1); opacity: 0.8; }
-}
+.credits-scroll h3{font-family:'Cinzel',serif;font-size:clamp(16px,3vw,24px);font-weight:400;letter-spacing:6px;text-align:center;color:#d4a047;text-transform:uppercase;padding:40px 0 20px}
+.credits-scroll .role{font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:4px;color:#666;text-transform:uppercase;text-align:center;padding:24px 0 10px}
+.credits-scroll .credit-item{display:flex;justify-content:space-between;align-items:baseline;font-size:clamp(14px,2vw,17px);padding:4px 0;max-width:480px;margin:0 auto;color:#e8e8e8}
+.credits-scroll .credit-item .name{font-family:'Cinzel',serif;font-weight:400;letter-spacing:1px}
+.credits-scroll .credit-item .dots{flex:1;border-bottom:1px dotted rgba(255,255,255,.25);margin:0 8px;min-width:20px}
+.credits-scroll .credit-item .price{font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:1px;color:#d4a047}
 
-/* ======== PAGE 1: INTRO (sepia) ======== */
-.page-1 {
-  background: #f5e0c0;
-  z-index: 9;
-}
-.page-1 .page-number {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  font-size: 12px;
-  color: #a08060;
-  font-family: 'Special Elite', monospace;
-}
-.intro-content {
-  max-width: 320px;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-.intro-content h2 {
-  font-family: 'Cinzel', serif;
-  font-size: 22px;
-  color: #3d2b1f;
-  margin-bottom: 20px;
-  letter-spacing: 3px;
-}
-.intro-content .body-text {
-  font-size: 13px;
-  line-height: 1.8;
-  color: #4a3520;
-  text-align: left;
-  margin-bottom: 20px;
-}
-.intro-content .body-text em {
-  font-style: italic;
-}
-.intro-margin-note {
-  position: absolute;
-  top: 40px;
-  right: -10px;
-  font-family: 'Caveat', cursive;
-  font-size: 14px;
-  color: #6b4a2a;
-  transform: rotate(3deg);
-  opacity: 0.7;
-}
-.intro-drawing {
-  position: relative;
-  width: 200px;
-  height: 100px;
-  margin: 20px auto;
-}
-.intro-drawing .circle {
-  position: absolute;
-  width: 60px; height: 60px;
-  border: 2px solid #3d2b1f;
-  border-radius: 50%;
-  top: 10px; left: 20px;
-}
-.intro-drawing .circle2 {
-  position: absolute;
-  width: 40px; height: 40px;
-  border: 2px solid #3d2b1f;
-  border-radius: 50%;
-  top: 25px; left: 50px;
-}
-.intro-drawing .line1 {
-  position: absolute;
-  top: 60px; left: 60px;
-  width: 100px; height: 2px;
-  background: #3d2b1f;
-  transform: rotate(-10deg);
-}
-.intro-drawing .line2 {
-  position: absolute;
-  top: 65px; left: 70px;
-  width: 80px; height: 1px;
-  background: #3d2b1f;
-  transform: rotate(5deg);
-}
+/* the end */
+.the-end{text-align:center;padding:100px 24px 60px;background:#f5f0e8}
+.the-end h2{font-family:'Cinzel',serif;font-size:clamp(42px,8vw,72px);font-weight:700;letter-spacing:12px;color:#1a1a1a;text-transform:uppercase;line-height:1}
+.the-end .tagline{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3px;color:#999;margin-top:12px;text-transform:uppercase}
 
-/* Coffee stain on page 1 */
-.page-1 .stain {
-  position: absolute;
-  top: 15%;
-  left: 5%;
-  width: 80px;
-  height: 60px;
-  background: radial-gradient(ellipse at 40% 50%, rgba(139,90,43,0.12) 0%, transparent 65%);
-  border-radius: 50%;
-  pointer-events: none;
-  transform: rotate(-20deg);
-}
+/* ticket stub cta */
+.ticket{display:inline-flex;align-items:center;gap:16px;margin:32px auto 0;padding:14px 32px;background:#1a1a1a;position:relative;cursor:pointer;transition:all .3s ease}
+.ticket::before,.ticket::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#f5f0e8}
+.ticket::before{top:-10px;left:-10px}
+.ticket::after{bottom:-10px;right:-10px}
+.ticket:hover{transform:scale(1.03);background:#d4a047}
+.ticket:hover span{color:#1a1a1a}
+.ticket span{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#fff;transition:color .3s}
+.ticket .tear{font-family:'Cinzel',serif;font-size:10px;color:#666;transition:color .3s}
+.ticket:hover .tear{color:#1a1a1a}
 
-/* ======== PAGE 2: MENU SPREAD ======== */
-.page-2 {
-  background: #f0dcc0;
-  z-index: 8;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 60px;
-}
+/* contact */
+.contact{text-align:center;padding:40px 24px 60px;background:#f5f0e8}
+.contact p{font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;color:#999;margin-bottom:4px}
+.contact a{color:#1a1a1a;text-decoration:none;font-size:13px;letter-spacing:1px;font-weight:500}
+.contact a:hover{color:#d4a047}
 
-/* Film frame corner decorations */
-.page-2 .film-corner {
-  position: absolute;
-  width: 40px; height: 40px;
-  border: 2px solid #3d2b1f;
-  pointer-events: none;
-}
-.page-2 .film-corner.tl { top: 15px; left: 15px; border-right: none; border-bottom: none; }
-.page-2 .film-corner.tr { top: 15px; right: 15px; border-left: none; border-bottom: none; }
-.page-2 .film-corner.bl { bottom: 15px; left: 15px; border-right: none; border-top: none; }
-.page-2 .film-corner.br { bottom: 15px; right: 15px; border-left: none; border-top: none; }
+/* scroll hint */
+.scroll-hint{text-align:center;padding:20px 24px 40px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:3px;color:#ccc;text-transform:uppercase;background:#000}
 
-.menu-left, .menu-right {
-  width: 45%;
-  min-width: 140px;
-  position: relative;
-  z-index: 1;
+/* responsive */
+@media(max-width:640px){
+.top-bar{padding:10px 16px}
+.hero{height:80vh}
+.hero-overlay{padding:0 16px 32px}
+.credits-wrap{height:450px}
 }
-.menu-left {
-  margin-right: 10px;
-}
-.menu-left h3, .menu-right h3 {
-  font-family: 'Cinzel', serif;
-  font-size: 14px;
-  color: #3d2b1f;
-  letter-spacing: 3px;
-  margin-bottom: 16px;
-  text-align: center;
-  border-bottom: 1px dashed #a08060;
-  padding-bottom: 8px;
-}
-.menu-item {
-  margin-bottom: 14px;
-  font-size: 11px;
-  color: #4a3520;
-  line-height: 1.5;
-}
-.menu-item .name {
-  font-weight: bold;
-  font-size: 12px;
-}
-.menu-item .role {
-  font-family: 'Special Elite', monospace;
-  font-size: 9px;
-  color: #8b7355;
-}
-.menu-item .price {
-  font-size: 10px;
-  color: #6b4a2a;
-  float: right;
-}
-
-/* Typewriter underline */
-.menu-item .name::after {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 1px;
-  background: repeating-linear-gradient(to right, #8b7355 0px, #8b7355 3px, transparent 3px, transparent 6px);
-  margin-top: 3px;
-}
-
-/* Menu sketch on right page */
-.menu-sketch {
-  width: 120px;
-  height: 100px;
-  margin: 10px auto 0;
-  position: relative;
-}
-.menu-sketch .plate {
-  position: absolute;
-  top: 20px; left: 20px;
-  width: 80px; height: 25px;
-  border: 2px solid #3d2b1f;
-  border-radius: 50%;
-}
-.menu-sketch .patty {
-  position: absolute;
-  top: 24px; left: 35px;
-  width: 40px; height: 16px;
-  background: rgba(61,43,31,0.2);
-  border-radius: 50%;
-}
-.menu-sketch .steam1, .menu-sketch .steam2, .menu-sketch .steam3 {
-  position: absolute;
-  width: 2px;
-  background: rgba(61,43,31,0.15);
-  border-radius: 2px;
-  animation: steamRise 3s ease-in-out infinite;
-}
-.menu-sketch .steam1 { height: 20px; top: 0; left: 30px; animation-delay: 0s; }
-.menu-sketch .steam2 { height: 15px; top: 2px; left: 42px; animation-delay: 1s; }
-.menu-sketch .steam3 { height: 18px; top: 1px; left: 55px; animation-delay: 0.5s; }
-@keyframes steamRise {
-  0%, 100% { transform: translateY(0); opacity: 0.3; }
-  50% { transform: translateY(-10px); opacity: 0.6; }
-}
-
-/* ======== PAGE 3: ATMOSPHERE ======== */
-.page-3 {
-  background: #3d2b1f;
-  z-index: 7;
-  position: relative;
-  overflow: hidden;
-}
-.page-3::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: 
-    radial-gradient(ellipse at 50% 30%, rgba(212,160,71,0.08) 0%, transparent 50%),
-    linear-gradient(180deg, transparent 0%, rgba(139,90,43,0.1) 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Filmstrip along the edge */
-.filmstrip {
-  position: absolute;
-  top: 0;
-  right: 8px;
-  width: 14px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  padding: 20px 0;
-  z-index: 5;
-}
-.filmstrip .sprocket {
-  width: 6px;
-  height: 10px;
-  border: 1px solid rgba(212,160,71,0.3);
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-/* Projector beam */
-.projector-beam {
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  width: 40%;
-  height: 60%;
-  background: linear-gradient(135deg, rgba(212,160,71,0.06) 0%, rgba(212,160,71,0.02) 40%, transparent 70%);
-  transform: skewX(-10deg) translateX(-20%);
-  pointer-events: none;
-  z-index: 1;
-  animation: beamSweep 8s ease-in-out infinite;
-}
-@keyframes beamSweep {
-  0%, 100% { transform: skewX(-10deg) translateX(-25%); }
-  50% { transform: skewX(-5deg) translateX(-15%); }
-}
-
-/* Theatre seats (CSS shapes) */
-.theatre-seats {
-  position: absolute;
-  bottom: 30%;
-  left: 5%;
-  right: 5%;
-  height: 60px;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.theatre-seats .seat {
-  width: 20px;
-  height: 18px;
-  background: rgba(139,0,0,0.4);
-  border-radius: 4px 4px 2px 2px;
-  border-top: 2px solid rgba(139,0,0,0.6);
-}
-
-/* Center content */
-.page-3-content {
-  position: relative;
-  z-index: 3;
-  text-align: center;
-  max-width: 320px;
-  color: #d4a047;
-}
-.page-3-content h2 {
-  font-family: 'Cinzel', serif;
-  font-size: 18px;
-  letter-spacing: 5px;
-  margin-bottom: 16px;
-  opacity: 0.9;
-}
-.page-3-content p {
-  font-family: 'Special Elite', monospace;
-  font-size: 11px;
-  line-height: 1.8;
-  color: #a08060;
-  margin-bottom: 10px;
-}
-
-/* ======== PAGE 4: FINAL FRAME ======== */
-.page-4 {
-  background: #f5e0c0;
-  z-index: 6;
-}
-.page-4-content {
-  text-align: center;
-  position: relative;
-  z-index: 1;
-  max-width: 320px;
-}
-.page-4-content .the-end {
-  font-family: 'Cinzel', serif;
-  font-size: 48px;
-  color: #3d2b1f;
-  letter-spacing: 10px;
-  transform: rotate(-2deg);
-  margin-bottom: 30px;
-  opacity: 0.8;
-}
-.page-4-content .credits {
-  font-size: 10px;
-  line-height: 2;
-  color: #6b4a2a;
-  text-align: center;
-}
-.page-4-content .credits span {
-  display: block;
-}
-
-/* Ticket stub */
-.ticket-stub {
-  position: absolute;
-  bottom: 40px;
-  left: 10%;
-  width: 80%;
-  max-width: 280px;
-  background: #f0dcc0;
-  border: 2px dashed #3d2b1f;
-  padding: 14px;
-  font-size: 11px;
-  color: #3d2b1f;
-  z-index: 2;
-  transform: rotate(-1deg);
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
-}
-.ticket-stub::before {
-  content: '';
-  position: absolute;
-  left: -8px;
-  top: 50%;
-  width: 14px; height: 14px;
-  background: #2c1810;
-  border-radius: 50%;
-  transform: translateY(-50%);
-}
-.ticket-stub .ticket-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-.ticket-stub .ticket-label {
-  font-size: 8px;
-  font-family: 'Special Elite', monospace;
-  color: #8b7355;
-  letter-spacing: 2px;
-}
-.ticket-stub .ticket-value {
-  font-size: 12px;
-  font-weight: bold;
-}
-.ticket-stub .whatsapp-link {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 6px 16px;
-  border: 1px solid #3d2b1f;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-decoration: none;
-  color: #3d2b1f;
-  transition: all 0.3s;
-}
-.ticket-stub .whatsapp-link:active {
-  background: #3d2b1f;
-  color: #f0dcc0;
-}
-
-/* ======== FILMSTRIP NAV ======== */
-.filmstrip-nav {
-  position: fixed;
-  left: 4px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-.filmstrip-nav.visible {
-  opacity: 1;
-}
-.filmstrip-nav .frame {
-  width: 16px;
-  height: 16px;
-  border: 1px solid rgba(212,160,71,0.3);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-  background: rgba(212,160,71,0.1);
-}
-.filmstrip-nav .frame.active {
-  border-color: #d4a047;
-  background: rgba(212,160,71,0.3);
-  box-shadow: 0 0 8px rgba(212,160,71,0.3);
-}
-.filmstrip-nav .frame:hover {
-  border-color: #d4a047;
-}
-.filmstrip-nav .frame-label {
-  position: absolute;
-  left: 22px;
-  top: -2px;
-  font-family: 'Special Elite', monospace;
-  font-size: 7px;
-  color: #8b7355;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
-.filmstrip-nav .frame:hover .frame-label {
-  opacity: 1;
-}
-.filmstrip-nav .frame.active .frame-label {
-  opacity: 1;
-  color: #d4a047;
-}
-
-/* The red line indicator */
-.filmstrip-nav::before {
-  content: '';
-  position: absolute;
-  left: 7px;
-  width: 2px;
-  height: 0;
-  background: #cc0000;
-  transition: height 0.3s;
-  top: 0;
-}
-
-/* ======== PAGE DUMPLING EFFECT (paper edge curl) ======== */
-.page-curl {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(225deg, transparent 30%, rgba(61,43,31,0.08) 50%, rgba(61,43,31,0.15) 100%);
-  pointer-events: none;
-  z-index: 3;
-}
-
-/* ======== ANIMATIONS ======== */
-@keyframes fadeInUp {
-  0% { opacity: 0; transform: translateY(15px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.85; }
-}
-@keyframes pageShadow {
-  0%, 100% { box-shadow: -4px 0 12px rgba(0,0,0,0.1); }
-  50% { box-shadow: -6px 0 18px rgba(0,0,0,0.15); }
-}
-
-/* ======== RESPONSIVE ======== */
-@media (max-width: 400px) {
-  .cover-title { font-size: 32px; letter-spacing: 8px; }
-  .book-spine { width: 180px; height: 260px; }
-  .book-spine .title { font-size: 14px; }
-  .menu-left, .menu-right { width: 100%; min-width: auto; margin: 0; }
-  .menu-right { margin-top: 20px; }
-  .filmstrip-nav { left: 2px; }
-  .filmstrip-nav .frame { width: 12px; height: 12px; }
-  .intro-margin-note { position: relative; top: auto; right: auto; text-align: right; margin-top: 10px; }
-  .page { padding: 20px 15px; }
-  .page-4-content .the-end { font-size: 32px; }
-}
-@media (min-width: 768px) {
-  .page { padding: 60px 40px; }
-  .cover-title { font-size: 56px; }
-  .menu-left, .menu-right { width: 40%; }
-  .intro-content { max-width: 500px; }
-  .intro-content h2 { font-size: 28px; }
-  .book-spine { width: 300px; height: 420px; }
-  .filmstrip-nav .frame { width: 20px; height: 20px; }
-  .page-3-content { max-width: 500px; }
-}
-
-/* ======== SCROLLBAR ======== */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #2c1810; }
-::-webkit-scrollbar-thumb { background: #8b7355; border-radius: 4px; }
 </style>
 </head>
 <body>
 
-<!-- ====== BOOK EDGE (pre-loader visual) ====== -->
-<div class="book-edge" id="bookEdge">
-  <div class="book-spine">
-    <div class="title">CHAPLIN</div>
-    <div class="sub">Kordonboyu</div>
+<div class="top-bar">
+  <h1>Chaplin</h1>
+  <span class="now-showing">Now Showing</span>
+</div>
+
+<section class="hero">
+  <img src="https://picsum.photos/seed/chaplin-hero/1600/900" alt="Chaplin Cafe & Restaurant">
+  <div class="hero-overlay">
+    <h2>Cafe &amp; Restaurant</h2>
+    <div class="sub">Kordonboyu Cd. · Büyükçekmece</div>
+  </div>
+</section>
+
+<div class="section-label">— Film Şeridi —</div>
+
+<div class="film-strip-wrap">
+  <div class="film-strip">
+
+    <div class="frame">
+      <div class="frame-inner">
+        <span class="perf-l"></span><span class="perf-r"></span>
+        <img src="https://picsum.photos/seed/chaplin-1/400/300" alt="Kahvaltı">
+      </div>
+      <div class="frame-caption">Kahvaltı<small>Serpme · 08:00–13:00</small></div>
+    </div>
+
+    <div class="reel-gap"></div>
+
+    <div class="frame">
+      <div class="frame-inner">
+        <span class="perf-l"></span><span class="perf-r"></span>
+        <img src="https://picsum.photos/seed/chaplin-2/400/300" alt="Makarna">
+      </div>
+      <div class="frame-caption">Makarna<small>El yapımı · Her gün</small></div>
+    </div>
+
+    <div class="reel-gap"></div>
+
+    <div class="frame">
+      <div class="frame-inner">
+        <span class="perf-l"></span><span class="perf-r"></span>
+        <img src="https://picsum.photos/seed/chaplin-3/400/300" alt="Tatlı">
+      </div>
+      <div class="frame-caption">Tatlı<small>Günlük · Pastane</small></div>
+    </div>
+
+    <div class="reel-gap"></div>
+
+    <div class="frame">
+      <div class="frame-inner">
+        <span class="perf-l"></span><span class="perf-r"></span>
+        <img src="https://picsum.photos/seed/chaplin-4/400/300" alt="Kahve">
+      </div>
+      <div class="frame-caption">Kahve<small>Filter · Espresso · Soğuk</small></div>
+    </div>
+
+    <div class="reel-gap"></div>
+
+    <div class="frame">
+      <div class="frame-inner">
+        <span class="perf-l"></span><span class="perf-r"></span>
+        <img src="https://picsum.photos/seed/chaplin-5/400/300" alt="Nargile">
+      </div>
+      <div class="frame-caption">Nargile<small>55 çeşit · Her akşam</small></div>
+    </div>
+
   </div>
 </div>
 
-<!-- ====== PAGE INDICATOR ====== -->
-<div class="page-indicator">
-  <span>↓ sayfayı çevir ↓</span>
-</div>
+<section class="credits-wrap">
+  <div class="credits-mask"></div>
+  <div class="credits-scroll">
 
-<!-- ====== FILMSTRIP NAV ====== -->
-<nav class="filmstrip-nav" id="filmstripNav">
-  <div class="frame" data-page="0"><span class="frame-label">Kapak</span></div>
-  <div class="frame" data-page="1"><span class="frame-label">Hikâye</span></div>
-  <div class="frame" data-page="2"><span class="frame-label">Menü</span></div>
-  <div class="frame" data-page="3"><span class="frame-label">Atmosfer</span></div>
-  <div class="frame" data-page="4"><span class="frame-label">İletişim</span></div>
-</nav>
+    <h3>Oyuncu Kadrosu</h3>
 
-<!-- ====== FLIPBOOK CONTAINER ====== -->
-<div class="flipbook-container">
+    <div class="role">★ Başrol ★</div>
 
-  <!-- COVER -->
-  <section class="page page-cover" id="page0">
-    <div class="cover-content">
-      <div class="chaplin-silhouette">
-        <div class="chaplin-hat"></div>
-        <div class="chaplin-hat-top"></div>
-        <div class="chaplin-head"></div>
-        <div class="chaplin-body"></div>
-        <div class="chaplin-cane"></div>
-      </div>
-      <h1 class="cover-title">CHAPLIN</h1>
-      <p class="cover-sub">✦ KORDONBOYU, BÜYÜKÇEKMECE ✦</p>
-      <div class="cover-stamp">SİNEMA<br>&amp;<br>LEZZET</div>
+    <div class="credit-item"><span class="name">Serpme Kahvaltı</span><span class="dots"></span><span class="price">190₺</span></div>
+    <div class="credit-item"><span class="name">Menemen</span><span class="dots"></span><span class="price">120₺</span></div>
+    <div class="credit-item"><span class="name">Truffle Makarna</span><span class="dots"></span><span class="price">165₺</span></div>
+    <div class="credit-item"><span class="name">Izgara Somon</span><span class="dots"></span><span class="price">245₺</span></div>
+    <div class="credit-item"><span class="name">Chaplin Burger</span><span class="dots"></span><span class="price">175₺</span></div>
+    <div class="credit-item"><span class="name">Tiramisu</span><span class="dots"></span><span class="price">110₺</span></div>
+
+    <div class="role">★ Yardımcı Oyuncular ★</div>
+
+    <div class="credit-item"><span class="name">Patates Kızartması</span><span class="dots"></span><span class="price">65₺</span></div>
+    <div class="credit-item"><span class="name">Mevsim Salata</span><span class="dots"></span><span class="price">85₺</span></div>
+    <div class="credit-item"><span class="name">Soğuk Kahve</span><span class="dots"></span><span class="price">75₺</span></div>
+    <div class="credit-item"><span class="name">Çay</span><span class="dots"></span><span class="price">25₺</span></div>
+    <div class="credit-item"><span class="name">Ayran</span><span class="dots"></span><span class="price">30₺</span></div>
+    <div class="credit-item"><span class="name">Portakal Suyu</span><span class="dots"></span><span class="price">55₺</span></div>
+
+    <div class="role">★ Konuk Oyuncular ★</div>
+
+    <div class="credit-item"><span class="name">Nargile (Meyveli)</span><span class="dots"></span><span class="price">130₺</span></div>
+    <div class="credit-item"><span class="name">Nargile (Klasik)</span><span class="dots"></span><span class="price">110₺</span></div>
+    <div class="credit-item"><span class="name">Milkshake</span><span class="dots"></span><span class="price">95₺</span></div>
+    <div class="credit-item"><span class="name">Filtre Kahve</span><span class="dots"></span><span class="price">65₺</span></div>
+
+    <h3 style="padding-top:60px">Direktör</h3>
+    <div class="credit-item" style="justify-content:center"><span class="name">Aile &middot; Lezzet &middot; Gelenek</span></div>
+    <div class="credit-item" style="justify-content:center;padding-top:20px"><span class="name" style="font-size:12px;color:#666">Yapımcı: BLOK. Studio</span></div>
+
+  </div>
+</section>
+
+<div class="scroll-hint">— Sonsuza Dek —</div>
+
+<section class="the-end">
+  <h2>The End</h2>
+  <div class="tagline">Ama hikaye hala devam ediyor</div>
+
+  <a href="https://wa.me/905555555555" style="text-decoration:none">
+    <div class="ticket">
+      <span>Rezervasyon Yap</span>
+      <span class="tear">&#x2713;</span>
     </div>
-  </section>
+  </a>
+</section>
 
-  <!-- PAGE 1: HİKÂYE -->
-  <section class="page page-1" id="page1">
-    <div class="stain"></div>
-    <div class="intro-content">
-      <div class="intro-margin-note">Kordonboyu 109/A'da</div>
-      <h2>Sessiz Filmin Sesi</h2>
-      <div class="body-text">
-        <em>Charlie Chaplin'in ölümsüz komedisinden ilham alan mekânımız, sadece bir restoran değil — aynı zamanda bir sahne. Her tabak bir performans, her sunum bir sanat eseri.</em><br><br>
-        Kordonboyu'nun eşsiz manzarasında, sessiz filmlerin büyülü atmosferini aratmayan dekorumuzla, unutulmaz bir akşam yemeği deneyimi sunuyoruz.<br><br>
-        — <em>Bir gün gülmek için, bir gün düşünmek için — ama her gün iyi yemek için.</em>
-      </div>
-      <div class="intro-drawing">
-        <div class="circle"></div>
-        <div class="circle2"></div>
-        <div class="line1"></div>
-        <div class="line2"></div>
-      </div>
-    </div>
-    <div class="page-number">— 1 —</div>
-    <div class="page-curl"></div>
-  </section>
+<section class="contact">
+  <p>Kordonboyu Cd. No:109/A · Büyükçekmece · İstanbul</p>
+  <a href="tel:+902128838140">0212 883 81 40</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://instagram.com">@chaplincafe</a>
+</section>
 
-  <!-- PAGE 2: MENÜ SPREAD -->
-  <section class="page page-2" id="page2">
-    <div class="film-corner tl"></div>
-    <div class="film-corner tr"></div>
-    <div class="film-corner bl"></div>
-    <div class="film-corner br"></div>
-    
-    <div class="menu-left">
-      <h3>BAŞROL</h3>
-      <div class="menu-item">
-        <div class="name">Chaplin Burger <span class="price">₺245</span></div>
-        <div class="role">Özel sos, cheddar, karamelize soğan, el yapımı patates</div>
-      </div>
-      <div class="menu-item">
-        <div class="name">Melon Şapka Salata <span class="price">₺185</span></div>
-        <div class="role">Keçi peyniri, ceviz, nar ekşisi, roka</div>
-      </div>
-      <div class="menu-item">
-        <div class="name">Bastonlu Makarna <span class="price">₺220</span></div>
-        <div class="role">Trüflü krema, parmesan, mantar</div>
-      </div>
-      <div class="menu-item">
-        <div class="name">Sessiz Film Tabak <span class="price">₺320</span></div>
-        <div class="role">Izgara somon, sebze wok, teriyaki sos</div>
-      </div>
-    </div>
-    
-    <div class="menu-right">
-      <h3>YARDIMCI OYUNCULAR</h3>
-      <div class="menu-item">
-        <div class="name">Altın Çağ Pizza <span class="price">₺260</span></div>
-        <div class="role">Truffle, roka, prosciutto, parmesan</div>
-      </div>
-      <div class="menu-item">
-        <div class="name">Küçük Serseri Tatlısı <span class="price">₺175</span></div>
-        <div class="role">Çikolatalı fondan, frambuaz sos, dondurma</div>
-      </div>
-      <div class="menu-item">
-        <div class="name">Şapka Şarap <span class="price">₺180</span></div>
-        <div class="role">Kadeh / Şişe seçeneği ile</div>
-      </div>
-      
-      <div class="menu-sketch">
-        <div class="plate"></div>
-        <div class="patty"></div>
-        <div class="steam1"></div>
-        <div class="steam2"></div>
-        <div class="steam3"></div>
-      </div>
-    </div>
-    
-    <div class="page-curl"></div>
-  </section>
-
-  <!-- PAGE 3: ATMOSFER -->
-  <section class="page page-3" id="page3">
-    <div class="filmstrip">
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-      <div class="sprocket"></div>
-    </div>
-    <div class="projector-beam"></div>
-    
-    <div class="theatre-seats">
-      <div class="seat"></div>
-      <div class="seat"></div>
-      <div class="seat"></div>
-      <div class="seat"></div>
-      <div class="seat"></div>
-      <div class="seat"></div>
-      <div class="seat"></div>
-      <div class="seat"></div>
-    </div>
-    
-    <div class="page-3-content">
-      <h2>✦ PERDE ✦</h2>
-      <p>Sessiz Film Salonu — Chaplin'in unutulmaz kareleri, vintage dekor, loş ışıklar...</p>
-      <p>Kordon Manzarası — Büyükçekmece Kordonboyu'nun eşsiz manzarası eşliğinde açık havada akşam yemeği.</p>
-      <p>Canlı Performans — Hafta sonları caz ve klasik müzik dinletileriyle yemeğinize eşlik.</p>
-    </div>
-    
-    <div class="page-curl"></div>
-  </section>
-
-  <!-- PAGE 4: THE END / İLETİŞİM -->
-  <section class="page page-4" id="page4">
-    <div class="page-4-content">
-      <div class="the-end">THE END</div>
-      <div class="credits">
-        <span>Yönetmen: Şefin Kendisi</span>
-        <span>Görüntü Yönetmeni: Kordonboyu Manzarası</span>
-        <span>Müzik: Hafta Sonu Caz</span>
-        <span>Yapım: Chaplin Cafe &amp; Restaurant</span>
-        <span style="margin-top:12px; font-size:11px;">Kordonboyu Cd. No:109/A, Büyükçekmece</span>
-        <span style="font-size:11px;">0531 234 56 78</span>
-      </div>
-    </div>
-    
-    <div class="ticket-stub">
-      <div class="ticket-row">
-        <span class="ticket-label">FİLM</span>
-        <span class="ticket-value">Chaplin</span>
-      </div>
-      <div class="ticket-row">
-        <span class="ticket-label">TARİH</span>
-        <span class="ticket-value">Her Gün</span>
-      </div>
-      <div class="ticket-row">
-        <span class="ticket-label">KOLTUK</span>
-        <span class="ticket-value">Sizin İçin Ayrıldı</span>
-      </div>
-      <div style="text-align:center; margin-top:10px; border-top: 1px dashed #3d2b1f; padding-top:10px;">
-        <a href="https://wa.me/905312345678" class="whatsapp-link">REZERVASYON</a>
-      </div>
-    </div>
-    
-    <div class="page-curl"></div>
-  </section>
-
-</div>
-
-<script>
-// ======== PAGE VISIBILITY WITH INTERSECTION OBSERVER ========
-const pages = document.querySelectorAll('.page');
-const navFrames = document.querySelectorAll('.filmstrip-nav .frame');
-const filmstripNav = document.getElementById('filmstripNav');
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    const page = entry.target;
-    if (entry.isIntersecting) {
-      page.classList.add('visible');
-      
-      // Update active nav frame
-      const pageId = page.id;
-      const pageNum = pageId.replace('page', '');
-      navFrames.forEach((frame, i) => {
-        frame.classList.toggle('active', i === parseInt(pageNum));
-      });
-      
-      // Show nav after first page
-      if (pageNum !== '0') {
-        filmstripNav.classList.add('visible');
-      }
-    }
-  });
-}, { threshold: 0.3 });
-
-pages.forEach(page => observer.observe(page));
-
-// ======== FILMSTRIP NAV CLICK ========
-navFrames.forEach(frame => {
-  frame.addEventListener('click', () => {
-    const pageIndex = frame.dataset.page;
-    const targetPage = document.getElementById(`page${pageIndex}`);
-    if (targetPage) {
-      targetPage.scrollIntoView({ behavior: 'smooth' });
-    }
-  });
-});
-
-// ======== HIDE BOOK EDGE ON SCROLL ========
-let hasScrolled = false;
-window.addEventListener('scroll', () => {
-  if (!hasScrolled && window.scrollY > 50) {
-    hasScrolled = true;
-    document.getElementById('bookEdge').style.opacity = '0';
-    document.getElementById('bookEdge').style.transition = 'opacity 1s';
-    document.querySelector('.page-indicator').style.opacity = '0';
-  }
-}, { passive: true });
-
-// ======== TICKET STUB REVEAL ========
-const ticketObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'rotate(-1deg) scale(1)';
-    }
-  });
-}, { threshold: 0.5 });
-
-const ticket = document.querySelector('.ticket-stub');
-if (ticket) {
-  ticket.style.opacity = '0';
-  ticket.style.transform = 'rotate(-1deg) scale(0.8)';
-  ticket.style.transition = 'all 0.8s ease-out 0.3s';
-  ticketObserver.observe(ticket);
-}
-
-// ======== FADE IN COVER CONTENT ON LOAD ========
-window.addEventListener('load', () => {
-  document.body.classList.add('loaded');
-});
-
-console.log('🎬 Chaplin Flipbook — sayfalar çevriliyor...');
-</script>
 </body>
 </html>
