@@ -19,17 +19,12 @@ body{background:#0a0a0a;color:#e8e0d8;font-family:'DM Sans',sans-serif;-webkit-f
 .marquee-bulb{flex:0 0 12px;height:6px;background:rgba(212,160,71,.15);animation:bulbChase 1.2s infinite linear}
 .marquee-bulb:nth-child(odd){background:rgba(212,160,71,.5);animation-delay:.3s}
 @keyframes bulbChase{0%,100%{opacity:.2}50%{opacity:1}}
-
-/* projector beam */
 .projector-beam{position:absolute;top:-20%;left:-10%;width:60%;height:160%;background:linear-gradient(135deg,rgba(255,240,200,.04) 0%,transparent 70%);transform:rotate(-25deg);z-index:1;animation:beamSweep 12s ease-in-out infinite;pointer-events:none}
 @keyframes beamSweep{0%,100%{transform:rotate(-25deg) translateX(-10%)}50%{transform:rotate(-15deg) translateX(30%)}}
-
-/* hero content */
 .hero-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,160,71,.12);border:1px solid rgba(212,160,71,.3);padding:6px 18px;border-radius:100px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#d4a047;margin-bottom:clamp(20px,4vh,40px);font-weight:500;backdrop-filter:blur(4px)}
 .hero-badge .dot{width:5px;height:5px;border-radius:50%;background:#d4a047;animation:pulse-dot 2s infinite}
 @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
-
 .hero-title{font-family:'Cinzel',serif;font-size:clamp(48px,12vw,140px);font-weight:900;letter-spacing:clamp(8px,2vw,24px);color:transparent;background:linear-gradient(180deg,#f0e0b8 0%,#d4a047 50%,#b8862e 100%);-webkit-background-clip:text;background-clip:text;line-height:.9;text-transform:uppercase;position:relative}
 .hero-title::after{content:'';display:block;width:clamp(60px,12vw,160px);height:2px;background:linear-gradient(90deg,transparent,#d4a047,transparent);margin:clamp(12px,2vh,24px) auto}
 .hero-sub{font-family:'Cinzel',serif;font-size:clamp(11px,1.6vw,18px);letter-spacing:clamp(4px,1vw,10px);color:rgba(232,224,216,.6);font-weight:400;text-transform:uppercase;margin-bottom:8px}
@@ -40,38 +35,55 @@ body{background:#0a0a0a;color:#e8e0d8;font-family:'DM Sans',sans-serif;-webkit-f
 @keyframes fadeUp{0%,100%{opacity:.3;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(-6px)}}
 
 /* ─── SECTION LABEL ─── */
-.section-label{text-align:center;padding:80px 24px 40px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:rgba(212,160,71,.4);text-transform:uppercase;position:relative}
-.section-label::before,.section-label::after{content:'——';letter-spacing:-2px;color:rgba(212,160,71,.15);margin:0 12px}
+.section-label{text-align:center;padding:80px 24px 40px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:rgba(212,160,71,.4);text-transform:uppercase}
+.section-label span{display:inline-block;position:relative}
+.section-label span::before,.section-label span::after{content:'——';letter-spacing:-2px;color:rgba(212,160,71,.15);margin:0 12px}
+.section-label i{font-style:normal;color:rgba(212,160,71,.15);font-size:7px;letter-spacing:2px;display:block;margin-top:4px}
 
-/* ─── SCROLL FILM STRIP ─── */
-.film-container{max-width:680px;margin:0 auto;padding:0 24px 60px}
-.film-frame{display:flex;gap:20px;align-items:center;margin-bottom:40px;opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.22,1,.36,1)}
-.film-frame.visible{opacity:1;transform:translateY(0)}
-.film-frame:nth-child(even){flex-direction:row-reverse}
-.film-frame-img{flex:0 0 clamp(180px,30vw,260px);position:relative;padding:8px;background:#1a1a1a;border:1px solid rgba(212,160,71,.15)}
-.film-frame-img img{width:100%;height:clamp(140px,20vw,200px);object-fit:cover;filter:grayscale(.8) contrast(1.1);display:block}
-/* sprocket holes */
-.film-frame-img::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,transparent 0,transparent 4px,#0a0a0a 4px,#0a0a0a 8px);z-index:2}
-.film-frame-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,transparent 0,transparent 4px,#0a0a0a 4px,#0a0a0a 8px);z-index:2}
-.film-frame-text{flex:1}
-.film-frame-text h3{font-family:'Cinzel',serif;font-size:clamp(14px,1.8vw,18px);font-weight:600;letter-spacing:3px;color:#d4a047;text-transform:uppercase;margin-bottom:4px}
-.film-frame-text p{font-size:clamp(12px,1.3vw,14px);color:rgba(232,224,216,.55);letter-spacing:.3px;line-height:1.6}
-.film-frame-text .tag{display:inline-block;margin-top:8px;font-size:9px;letter-spacing:2px;color:rgba(232,224,216,.3);text-transform:uppercase;background:rgba(212,160,71,.08);padding:3px 10px;border-radius:100px}
+/* ─── SCROLL-DRIVEN FILM TAPE ─── */
+.film-section{position:relative;height:400vh}
+.film-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:#0a0a0a}
 
-/* divider dots */
-.reel-divider{text-align:center;padding:10px 0 30px;color:rgba(212,160,71,.2);font-size:8px;letter-spacing:8px}
+/* film strip itself: dark bar with sprocket holes */
+.film-strip{position:absolute;top:50%;left:0;right:0;height:clamp(320px,42vh,480px);transform:translateY(-50%);background:linear-gradient(180deg,#1c1a16,#0a0a0a 20%,#1c1a16 50%,#0a0a0a 80%,#1c1a16);z-index:1}
 
-/* ─── CREDITS ─── */
-.credits-wrap{position:relative;margin:40px 0 0;background:#000;overflow:hidden;height:600px}
-.credits-mask{position:absolute;inset:0;background:linear-gradient(180deg,#000 0%,transparent 10%,transparent 85%,#000 100%);z-index:2;pointer-events:none}
-.credits-scroll{position:absolute;bottom:0;left:0;right:0;padding:0 24px;animation:scrollCredits 28s linear infinite}
-@keyframes scrollCredits{0%{transform:translateY(0)}100%{transform:translateY(-72%)}}
-.credits-scroll h3{font-family:'Cinzel',serif;font-size:clamp(16px,3vw,24px);font-weight:400;letter-spacing:6px;text-align:center;color:#d4a047;text-transform:uppercase;padding:40px 0 20px}
-.credits-scroll .role{font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:4px;color:#666;text-transform:uppercase;text-align:center;padding:24px 0 10px}
-.credits-scroll .credit-item{display:flex;justify-content:space-between;align-items:baseline;font-size:clamp(14px,2vw,17px);padding:4px 0;max-width:480px;margin:0 auto;color:#e8e8e8}
-.credits-scroll .credit-item .name{font-family:'Cinzel',serif;font-weight:400;letter-spacing:1px}
-.credits-scroll .credit-item .dots{flex:1;border-bottom:1px dotted rgba(255,255,255,.25);margin:0 8px;min-width:20px}
-.credits-scroll .credit-item .price{font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:1px;color:#d4a047}
+/* sprocket holes top + bottom */
+.film-sprocket{position:absolute;left:0;right:0;height:20px;z-index:5;background:#1c1a16}
+.film-sprocket::before{content:'';display:block;height:100%;background:repeating-radial-gradient(circle at 16px 10px,transparent 0px,transparent 3px,#0a0a0a 3px, #0a0a0a 5px);background-size:32px 20px;background-repeat:repeat-x}
+.film-sprocket-t{top:0}
+.film-sprocket-b{bottom:0}
+
+/* horizontal track */
+.film-track{display:flex;align-items:center;gap:0;height:100%;padding:20px 0;position:relative;z-index:2;will-change:transform}
+
+/* film edge markings */
+.film-edge-top,.film-edge-bot{position:absolute;left:0;right:0;height:20px;z-index:3;font-family:'DM Sans',sans-serif;font-size:7px;letter-spacing:1.5px;color:rgba(255,255,255,.08);display:flex;align-items:center;overflow:hidden;pointer-events:none}
+.film-edge-top{top:20px;padding:0 24px}
+.film-edge-bot{bottom:20px;padding:0 24px}
+.film-edge-inner{white-space:nowrap;animation:edgeScroll 40s linear infinite;display:flex;gap:0}
+.film-edge-inner span{display:inline-block;width:80px;flex-shrink:0;text-align:center}
+@keyframes edgeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* individual frame */
+.film-frame{flex:0 0 clamp(240px,28vw,340px);margin:0 12px;position:relative;transition:transform .4s ease;overflow:hidden}
+.film-frame:first-child{margin-left:clamp(40px,6vw,80px)}
+.film-frame:last-child{margin-right:clamp(40px,6vw,80px)}
+.film-frame-inner{position:relative;overflow:hidden;aspect-ratio:4/3;border:1px solid rgba(212,160,71,.12);background:#111}
+.film-frame-inner img{width:100%;height:100%;object-fit:cover;filter:grayscale(.7) contrast(1.1);display:block;transition:filter .5s,transform .6s}
+.film-frame:hover img{filter:grayscale(.2) contrast(1.05);transform:scale(1.03)}
+
+/* film frame number */
+.frame-number{position:absolute;top:6px;right:8px;font-family:'DM Sans',sans-serif;font-size:8px;letter-spacing:1px;color:rgba(212,160,71,.3);z-index:2;opacity:0;transition:opacity .4s}
+.film-frame:hover .frame-number{opacity:1}
+
+/* frame label */
+.frame-label{width:100%;padding:8px 2px 6px;font-family:'DM Sans',sans-serif}
+.frame-label .dish{font-family:'Cinzel',serif;font-size:clamp(10px,1.1vw,13px);letter-spacing:2px;font-weight:600;color:#d4a047;text-transform:uppercase}
+.frame-label .desc{font-size:clamp(8px,.9vw,10px);letter-spacing:1.5px;color:rgba(232,224,216,.3);text-transform:uppercase;margin-top:2px}
+.frame-label .price{font-size:clamp(10px,1vw,12px);color:rgba(232,224,216,.5);font-weight:500;margin-top:2px}
+
+/* frame divider lines (film frame separators) */
+.frame-div{flex:0 0 4px;height:60%;background:linear-gradient(180deg,transparent,rgba(212,160,71,.08),transparent);border-radius:2px;flex-shrink:0}
 
 /* ─── THE END ─── */
 .the-end{text-align:center;padding:100px 24px 60px;background:#0a0a0a;position:relative}
@@ -79,7 +91,6 @@ body{background:#0a0a0a;color:#e8e0d8;font-family:'DM Sans',sans-serif;-webkit-f
 .the-end h2{font-family:'Cinzel',serif;font-size:clamp(42px,8vw,72px);font-weight:700;letter-spacing:12px;color:transparent;background:linear-gradient(180deg,#e8e0d8,#8a8078);-webkit-background-clip:text;background-clip:text;text-transform:uppercase;line-height:1}
 .the-end .tagline{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3px;color:rgba(232,224,216,.3);margin-top:12px;text-transform:uppercase}
 
-/* ticket cta */
 .ticket{display:inline-flex;align-items:center;gap:16px;margin:32px auto 0;padding:14px 32px;background:transparent;border:1px solid rgba(212,160,71,.3);position:relative;cursor:pointer;transition:all .4s ease}
 .ticket::before,.ticket::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#0a0a0a}
 .ticket::before{top:-10px;left:-10px}
@@ -97,25 +108,25 @@ body{background:#0a0a0a;color:#e8e0d8;font-family:'DM Sans',sans-serif;-webkit-f
 
 @media(max-width:640px){
 .hero{height:90vh}
-.film-frame,.film-frame:nth-child(even){flex-direction:column;align-items:flex-start;gap:12px}
-.film-frame-img{flex:unset;width:100%}
-.film-frame-img img{height:clamp(180px,40vw,260px)}
-.credits-wrap{height:450px}
+.film-strip{height:280px;top:45%}
+.film-frame{flex:0 0 220px;margin:0 8px}
+.film-frame:first-child{margin-left:16px}
+.film-frame:last-child{margin-right:16px}
+.film-section{height:250vh}
+.frame-label .dish{font-size:10px}
+.frame-label .desc{font-size:7px}
 }
 </style>
 </head>
 <body>
 
-<!-- ─── HERO ─── -->
+<!-- ─── MARQUEE HERO ─── -->
 <section class="hero">
   <img class="hero-bg" src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAG1-sgBVKuGJcJGnKTujIV7RmnFXNKP0fETe_y1Rv0_vPMjXsM52_piOv89kJ2drZHP2JrNK7_ml3XLCkDjioWix0-8feCa3tQZx_dibnW3eatz4V31HuQZrVJepcHYcV_l4sPUWw=w1920-h1080-k-no" alt="">
   <div class="hero-vignette"></div>
   <div class="projector-beam"></div>
-  
-  <!-- marquee bulbs -->
   <div class="hero-marquee" id="bulbs">${'<div class="marquee-bulb"></div>'.repeat(120)}</div>
   <div class="hero-marquee-btm">${'<div class="marquee-bulb"></div>'.repeat(120)}</div>
-
   <div class="hero-content">
     <div class="hero-badge"><span class="dot"></span>Şimdi Gösterimde</div>
     <h1 class="hero-title">Chaplin</h1>
@@ -127,164 +138,140 @@ body{background:#0a0a0a;color:#e8e0d8;font-family:'DM Sans',sans-serif;-webkit-f
       <span>0212 883 81 40</span>
     </div>
   </div>
-
   <div class="hero-scroll">Filmi başlat</div>
 </section>
 
-<!-- ─── FILM STRIP (SCROLL ANIMATION) ─── -->
-<div class="section-label">Film Şeridi</div>
+<!-- ─── SECTION LABEL ─── -->
+<div class="section-label"><span>Film Şeridi</span><i>sürükleyerek keşfedin</i></div>
 
-<div class="film-container">
+<!-- ─── SCROLL-DRIVEN FILM TAPE ─── -->
+<section class="film-section" id="filmSection">
 
-  <div class="film-frame">
-    <div class="film-frame-img">
-      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHsUpTiaPBxTTsyq3hs3KSH78VXrWozufADdXI9RB2aIJvr8BsEhkpLYI2rseHKm0CpFG-b9jIxukDuUqz8_k_XqVbW8xDzavian0nqWUOO5uD3xXH2WSaNr0HbIyEEcOW-LjOv=w600-h500-k-no" alt="Kahvaltı" loading="lazy">
-    </div>
-    <div class="film-frame-text">
-      <h3>Serpme Kahvaltı</h3>
-      <p>Güne başlamanın en güzel yolu. Taze peynirler, zeytinler, reçeller ve sıcacık çay eşliğinde keyifli bir sabah.</p>
-      <span class="tag">08:00–13:00 · 190₺</span>
-    </div>
-  </div>
+  <div class="film-sticky" id="filmSticky">
 
-  <div class="reel-divider">● ● ● ● ●</div>
+    <!-- film strip background -->
+    <div class="film-strip">
+      
+      <!-- sprocket holes -->
+      <div class="film-sprocket film-sprocket-t"></div>
+      <div class="film-sprocket film-sprocket-b"></div>
 
-  <div class="film-frame">
-    <div class="film-frame-img">
-      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHLM6fTZcdnDj06vRtMTOdf7JnXTKv0XdbEswXMMgXmzl-AFFVTWbChwH3WpiyOdf8Yx6ny1AdtiqPk6OmvjoTGKW--Ulh90ZLRxk2JtqW0jkozUTmrbhEA3gqANGUAvtpSm26jLA=w600-h500-k-no" alt="Makarna" loading="lazy">
-    </div>
-    <div class="film-frame-text">
-      <h3>El Yapımı Makarna</h3>
-      <p>Her gün taze hazırlanan makarnalar, özel soslar ve İtalyan lezzetleriyle buluşuyor. Truffle makarna imza yemeğimiz.</p>
-      <span class="tag">Her gün · 165₺</span>
-    </div>
-  </div>
+      <!-- edge markings (scrolling text) -->
+      <div class="film-edge-top"><div class="film-edge-inner" id="edgeTop"><span>CHAPLIN CAFE</span><span>● 35MM ●</span><span>RESTAURANT</span><span>● 35MM ●</span><span>KORDONBOYU</span><span>● 35MM ●</span><span>CHAPLIN CAFE</span><span>● 35MM ●</span><span>RESTAURANT</span><span>● 35MM ●</span><span>KORDONBOYU</span><span>● 35MM ●</span></div></div>
+      <div class="film-edge-bot"><div class="film-edge-inner" id="edgeBot"><span>CHAPLIN CAFE</span><span>● 35MM ●</span><span>RESTAURANT</span><span>● 35MM ●</span><span>KORDONBOYU</span><span>● 35MM ●</span><span>CHAPLIN CAFE</span><span>● 35MM ●</span><span>RESTAURANT</span><span>● 35MM ●</span><span>KORDONBOYU</span><span>● 35MM ●</span></div></div>
 
-  <div class="reel-divider">● ● ● ● ●</div>
+      <!-- horizontal track -->
+      <div class="film-track" id="filmTrack">
 
-  <div class="film-frame">
-    <div class="film-frame-img">
-      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGZf-uAe_owBjXHH2w304jrCMsLJl-6uxE2F3WpsrknsWRvgLZgGBe9Q_OMRYh15MYHO-zr13VF7YQWLpI1kF-JpUM7Te9pCW3Uu0EzaJ2vEn7o9SQzPIzoI8mfcfrMhGaMUOw=w600-h500-k-no" alt="Tatlı" loading="lazy">
-    </div>
-    <div class="film-frame-text">
-      <h3>Günlük Tatlılar</h3>
-      <p>Pastane usulü taze tatlılar, günlük hazırlanan tiramisu ve mevsim spesiyalleri ile tatlı bir mola verin.</p>
-      <span class="tag">Günlük · 110₺</span>
-    </div>
-  </div>
+        <!-- 1 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHsUpTiaPBxTTsyq3hs3KSH78VXrWozufADdXI9RB2aIJvr8BsEhkpLYI2rseHKm0CpFG-b9jIxukDuUqz8_k_XqVbW8xDzavian0nqWUOO5uD3xXH2WSaNr0HbIyEEcOW-LjOv=w600-h500-k-no" alt="">
+            <div class="frame-number">01</div>
+          </div>
+          <div class="frame-label"><div class="dish">Serpme Kahvaltı</div><div class="desc">Taze peynirler · zeytin · reçel</div><div class="price">190₺</div></div>
+        </div>
 
-  <div class="reel-divider">● ● ● ● ●</div>
+        <div class="frame-div"></div>
 
-  <div class="film-frame">
-    <div class="film-frame-img">
-      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSq3hbHkBaoxbKEEdQ24p8v1CGL1VdIsJJaCu5e0WPBwy4HP1JoToHAvCcD1r3Eg6zilponGK-Y66g3w7SLnzVF3MzXxZ5QNVjUX3pIRU61-RyfX62o71X3Ycs4gk7ddl2hx7X=w600-h500-k-no" alt="Kahve" loading="lazy">
-    </div>
-    <div class="film-frame-text">
-      <h3>Filtre Kahve & Espresso</h3>
-      <p>Özenle seçilmiş çekirdeklerden hazırlanan kahveler, soğuk demleme çeşitleri ve klasik espresso keyfi.</p>
-      <span class="tag">Filter · Espresso · Soğuk · 65₺</span>
-    </div>
-  </div>
+        <!-- 2 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHLM6fTZcdnDj06vRtMTOdf7JnXTKv0XdbEswXMMgXmzl-AFFVTWbChwH3WpiyOdf8Yx6ny1AdtiqPk6OmvjoTGKW--Ulh90ZLRxk2JtqW0jkozUTmrbhEA3gqANGUAvtpSm26jLA=w600-h500-k-no" alt="">
+            <div class="frame-number">02</div>
+          </div>
+          <div class="frame-label"><div class="dish">Truffle Makarna</div><div class="desc">El yapımı · taze sos</div><div class="price">165₺</div></div>
+        </div>
 
-  <div class="reel-divider">● ● ● ● ●</div>
+        <div class="frame-div"></div>
 
-  <div class="film-frame">
-    <div class="film-frame-img">
-      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAEEAZJXJaJ6Fxc1H6iDoza74JtwyizJ-irTgmzgySJeFXa2Wly2vKTll_pgjYxdWeE1HihJJhUaUyvTiUOJE333odC81QLShJW4VsxVDu3nAfdsmpBpUt9AU671D5U6G-0Y2u-tzgZHxlQw=w600-h500-k-no" alt="Nargile" loading="lazy">
-    </div>
-    <div class="film-frame-text">
-      <h3>Nargile Keyfi</h3>
-      <p>55 çeşit nargile seçeneğiyle akşam saatlerinde keyifli bir mola. Arkadaşlarınızla sohbetin tamamlayıcısı.</p>
-      <span class="tag">Her akşam · 110₺'den başlayan</span>
-    </div>
-  </div>
+        <!-- 3 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGZf-uAe_owBjXHH2w304jrCMsLJl-6uxE2F3WpsrknsWRvgLZgGBe9Q_OMRYh15MYHO-zr13VF7YQWLpI1kF-JpUM7Te9pCW3Uu0EzaJ2vEn7o9SQzPIzoI8mfcfrMhGaMUOw=w600-h500-k-no" alt="">
+            <div class="frame-number">03</div>
+          </div>
+          <div class="frame-label"><div class="dish">Günlük Tatlılar</div><div class="desc">Tiramisu · magnolya · profiterol</div><div class="price">110₺</div></div>
+        </div>
 
-  <div class="reel-divider">● ● ● ● ●</div>
+        <div class="frame-div"></div>
 
-  <div class="film-frame">
-    <div class="film-frame-img">
-      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGFtixkPZDh_odse8v1QRJ4dv-7wo7lPPuAAwYyHUac6NhfImYsGYCg8hSR7APr11exYt6y7Xl8_FRFDfBYWbCQo0R4EE866NRviQPmA_HNQJLvdmxCqyAUI9DMp6Spj9DlnKbfVg=w600-h500-k-no" alt="Chaplin İç Mekan" loading="lazy">
-    </div>
-    <div class="film-frame-text">
-      <h3>Sıcak Atmosfer</h3>
-      <p>Kordonboyu'nun kalbinde, samimi ve sıcak bir ortam. Aileniz ve arkadaşlarınızla keyifli vakit geçirin.</p>
-      <span class="tag">İç mekan · Dış mekan</span>
-    </div>
-  </div>
+        <!-- 4 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSq3hbHkBaoxbKEEdQ24p8v1CGL1VdIsJJaCu5e0WPBwy4HP1JoToHAvCcD1r3Eg6zilponGK-Y66g3w7SLnzVF3MzXxZ5QNVjUX3pIRU61-RyfX62o71X3Ycs4gk7ddl2hx7X=w600-h500-k-no" alt="">
+            <div class="frame-number">04</div>
+          </div>
+          <div class="frame-label"><div class="dish">Filtre Kahve</div><div class="desc">Özel çekirdek · espresso · soğuk</div><div class="price">65₺</div></div>
+        </div>
 
-  <div class="reel-divider">● ● ● ● ●</div>
+        <div class="frame-div"></div>
 
-  <div class="film-frame">
-    <div class="film-frame-img">
-      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGScy8vAe-7xWqfDjkuG-ZIHnpALki7kPOntrRUx7HTml5-iCP8smQfGfOIdwZCY5AIMN1BZaQ1L8zTbuV6YKyqFS38xmTG75rMKfRmWwHbG82RDiH21c4z_y6DaCCmtL7MK9Y=w600-h500-k-no" alt="Chaplin Burger" loading="lazy">
-    </div>
-    <div class="film-frame-text">
-      <h3>Chaplin Burger</h3>
-      <p>Izgara etin mükemmel lezzeti, özel soslar ve taze malzemelerle hazırlanan imza burgerimiz.</p>
-      <span class="tag">Her gün · 175₺</span>
-    </div>
-  </div>
+        <!-- 5 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAEEAZJXJaJ6Fxc1H6iDoza74JtwyizJ-irTgmzgySJeFXa2Wly2vKTll_pgjYxdWeE1HihJJhUaUyvTiUOJE333odC81QLShJW4VsxVDu3nAfdsmpBpUt9AU671D5U6G-0Y2u-tzgZHxlQw=w600-h500-k-no" alt="">
+            <div class="frame-number">05</div>
+          </div>
+          <div class="frame-label"><div class="dish">Nargile Keyfi</div><div class="desc">55 çeşit · meyveli &amp; klasik</div><div class="price">110₺'den</div></div>
+        </div>
 
-  <div class="reel-divider">● ● ● ● ●</div>
+        <div class="frame-div"></div>
 
-  <div class="film-frame">
-    <div class="film-frame-img">
-      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFESNGVY-xq01eaF07PB9gcJenlcqfP_ZHNGpXpyVcWXOKpZLTNKifbeoqXyr7_gpq9oCmhoabzkI2UdjKAQd0twFP7H2L_0RzktrjBtu6qhicyt3htB51WFhHvYibG-IdOukGfJQ=w600-h500-k-no" alt="Izgara Somon" loading="lazy">
-    </div>
-    <div class="film-frame-text">
-      <h3>Izgara Somon</h3>
-      <p>Taze somon, özel marine ile ızgarada mükemmel kıvamında pişirilir. Yanında mevsim sebzeleriyle servis edilir.</p>
-      <span class="tag">Her gün · 245₺</span>
-    </div>
-  </div>
+        <!-- 6 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGFtixkPZDh_odse8v1QRJ4dv-7wo7lPPuAAwYyHUac6NhfImYsGYCg8hSR7APr11exYt6y7Xl8_FRFDfBYWbCQo0R4EE866NRviQPmA_HNQJLvdmxCqyAUI9DMp6Spj9DlnKbfVg=w600-h500-k-no" alt="">
+            <div class="frame-number">06</div>
+          </div>
+          <div class="frame-label"><div class="dish">Sıcak Atmosfer</div><div class="desc">İç &amp; dış mekan · Kordonboyu</div><div class="price">—</div></div>
+        </div>
 
-</div>
+        <div class="frame-div"></div>
 
-<!-- ─── CREDITS ─── -->
-<section class="credits-wrap">
-  <div class="credits-mask"></div>
-  <div class="credits-scroll">
+        <!-- 7 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGScy8vAe-7xWqfDjkuG-ZIHnpALki7kPOntrRUx7HTml5-iCP8smQfGfOIdwZCY5AIMN1BZaQ1L8zTbuV6YKyqFS38xmTG75rMKfRmWwHbG82RDiH21c4z_y6DaCCmtL7MK9Y=w600-h500-k-no" alt="">
+            <div class="frame-number">07</div>
+          </div>
+          <div class="frame-label"><div class="dish">Chaplin Burger</div><div class="desc">Izgara et · özel sos</div><div class="price">175₺</div></div>
+        </div>
 
-    <h3>Oyuncu Kadrosu</h3>
+        <div class="frame-div"></div>
 
-    <div class="role">★ Başrol ★</div>
+        <!-- 8 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFESNGVY-xq01eaF07PB9gcJenlcqfP_ZHNGpXpyVcWXOKpZLTNKifbeoqXyr7_gpq9oCmhoabzkI2UdjKAQd0twFP7H2L_0RzktrjBtu6qhicyt3htB51WFhHvYibG-IdOukGfJQ=w600-h500-k-no" alt="">
+            <div class="frame-number">08</div>
+          </div>
+          <div class="frame-label"><div class="dish">Izgara Somon</div><div class="desc">Taze somon · mevsim sebzeleri</div><div class="price">245₺</div></div>
+        </div>
 
-    <div class="credit-item"><span class="name">Serpme Kahvaltı</span><span class="dots"></span><span class="price">190₺</span></div>
-    <div class="credit-item"><span class="name">Menemen</span><span class="dots"></span><span class="price">120₺</span></div>
-    <div class="credit-item"><span class="name">Truffle Makarna</span><span class="dots"></span><span class="price">165₺</span></div>
-    <div class="credit-item"><span class="name">Izgara Somon</span><span class="dots"></span><span class="price">245₺</span></div>
-    <div class="credit-item"><span class="name">Chaplin Burger</span><span class="dots"></span><span class="price">175₺</span></div>
-    <div class="credit-item"><span class="name">Tiramisu</span><span class="dots"></span><span class="price">110₺</span></div>
+        <div class="frame-div"></div>
 
-    <div class="role">★ Yardımcı Oyuncular ★</div>
+        <!-- 9 -->
+        <div class="film-frame">
+          <div class="film-frame-inner">
+            <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAG1-sgBVKuGJcJGnKTujIV7RmnFXNKP0fETe_y1Rv0_vPMjXsM52_piOv89kJ2drZHP2JrNK7_ml3XLCkDjioWix0-8feCa3tQZx_dibnW3eatz4V31HuQZrVJepcHYcV_l4sPUWw=w600-h500-k-no" alt="">
+            <div class="frame-number">09</div>
+          </div>
+          <div class="frame-label"><div class="dish">Chaplin Cafe</div><div class="desc">Kordonboyu Cd. No:109/A</div><div class="price">0212 883 81 40</div></div>
+        </div>
 
-    <div class="credit-item"><span class="name">Patates Kızartması</span><span class="dots"></span><span class="price">65₺</span></div>
-    <div class="credit-item"><span class="name">Mevsim Salata</span><span class="dots"></span><span class="price">85₺</span></div>
-    <div class="credit-item"><span class="name">Soğuk Kahve</span><span class="dots"></span><span class="price">75₺</span></div>
-    <div class="credit-item"><span class="name">Çay</span><span class="dots"></span><span class="price">25₺</span></div>
-    <div class="credit-item"><span class="name">Ayran</span><span class="dots"></span><span class="price">30₺</span></div>
-    <div class="credit-item"><span class="name">Portakal Suyu</span><span class="dots"></span><span class="price">55₺</span></div>
+      </div><!-- /film-track -->
 
-    <div class="role">★ Konuk Oyuncular ★</div>
+    </div><!-- /film-strip -->
 
-    <div class="credit-item"><span class="name">Nargile (Meyveli)</span><span class="dots"></span><span class="price">130₺</span></div>
-    <div class="credit-item"><span class="name">Nargile (Klasik)</span><span class="dots"></span><span class="price">110₺</span></div>
-    <div class="credit-item"><span class="name">Milkshake</span><span class="dots"></span><span class="price">95₺</span></div>
-    <div class="credit-item"><span class="name">Filtre Kahve</span><span class="dots"></span><span class="price">65₺</span></div>
+  </div><!-- /film-sticky -->
 
-    <h3 style="padding-top:60px">Direktör</h3>
-    <div class="credit-item" style="justify-content:center"><span class="name">Aile · Lezzet · Gelenek</span></div>
-    <div class="credit-item" style="justify-content:center;padding-top:20px"><span class="name" style="font-size:12px;color:#666">Yapımcı: BLOK. Studio</span></div>
-
-  </div>
 </section>
 
-<div style="text-align:center;padding:24px;font-family:'DM Sans',sans-serif;font-size:9px;letter-spacing:4px;color:rgba(232,224,216,.15);text-transform:uppercase;background:#000">— Sonsuza Dek —</div>
-
+<!-- ─── THE END ─── -->
 <section class="the-end">
   <h2>The End</h2>
   <div class="tagline">Ama hikaye hala devam ediyor</div>
-
   <a href="tel:+902128838140" style="text-decoration:none">
     <div class="ticket">
       <span>Rezervasyon Yap</span>
@@ -301,16 +288,41 @@ body{background:#0a0a0a;color:#e8e0d8;font-family:'DM Sans',sans-serif;-webkit-f
 </section>
 
 <script>
-// IntersectionObserver for scroll-triggered film frames
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      entry.target.classList.add('visible');
+// ─── SCROLL-DRIVEN FILM TAPE ───
+(function(){
+  const section = document.getElementById('filmSection');
+  const track = document.getElementById('filmTrack');
+
+  function updateFilm(){
+    const rect = section.getBoundingClientRect();
+    const viewH = window.innerHeight;
+    const sectionH = rect.height;
+
+    // progress: 0 when section bottom enters viewport, 1 when section top leaves
+    const raw = (viewH - rect.top) / (sectionH - viewH);
+    const progress = Math.max(0, Math.min(1, raw));
+
+    const maxTranslate = track.scrollWidth - window.innerWidth;
+    if(maxTranslate > 0){
+      track.style.transform = 'translateX(' + (-progress * maxTranslate) + 'px)';
+    }
+  }
+
+  // throttle scroll for perf
+  let ticking = false;
+  window.addEventListener('scroll', function(){
+    if(!ticking){
+      window.requestAnimationFrame(function(){
+        updateFilm();
+        ticking = false;
+      });
+      ticking = true;
     }
   });
-}, { threshold: 0.2 });
 
-document.querySelectorAll('.film-frame').forEach(el => observer.observe(el));
+  // initial call
+  updateFilm();
+})();
 </script>
 
 </body>
